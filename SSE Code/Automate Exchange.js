@@ -22,7 +22,9 @@ function checkStatus() {
 
 function automateExchange() {
   const exchange = SpreadsheetApp.openById();
-  
+  const indexA = SpreadsheetApp.openById();
+
+  // insert the row number of the stock as it appears on the 'Chart Statistics' sheet
   var fallStocks = [];
   var winterStocks = [];
   var springStocks = [];
@@ -34,6 +36,27 @@ function automateExchange() {
   var recentMarketChange = exchange.getSheetByName('Data & Statistics').getRange('E5').getValue();
   var marketAverage = exchange.getSheetByName('Chart Statistics').getRange(43, marketDay + 1).getValue();
 
+  //indexA evaluation
+  if (indexA.getSheetByName('Index A').getRange('H42').getValue() === 'A') {
+    var indexAEval = 2;
+  } else if (indexA.getSheetByName('Thurman Rating 1.1').getRange('H42').getValue() === 'B') {
+    var indexAEval = 1;
+  } else if (indexA.getSheetByName('Thurman Rating 1.1').getRange('H42').getValue() === 'C') {
+    var indexAEval = 0;
+  } else if (indexAEval.getSheetByName('Thurman Rating 1.1').getRange('H42').getValue() === 'D') {
+    var indexAEval= -1;
+  }
+
+  //indexB evaluation
+  var indexBStatistic = exchange.getSheetByName('Chart Statistics').getRange(49, marketDay + 1).getValue();
+  if ((indexBStatistic / marketAverage) >= 3) {
+    var indexBEval = 2;
+  } else if ((indexBStatistic / marketAverage) >= 2) {
+    var indexBEval = 1;
+  } else if ((indexBStatistic / marketAverage) >= 1) {
+    var indexBEval = 0;
+  }   
+  
   //market change Evaluation
   if (recentMarketChange > 0) {
     var marketChangeEvaluation = 3;
@@ -46,7 +69,7 @@ function automateExchange() {
   for (var i = 0; i < 40; i++) {
     // ↑ 40 can be changed to whatever the stock count is on your version of the market
 
-    //growth Evaluation
+    //Growth Evaluation
 
     var percentChangeTotal = (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn + 2).getValue()) + (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue());
     if (percentChangeTotal*10 >= 8) {
@@ -73,12 +96,10 @@ function automateExchange() {
       var percentChangeEval = -10;
     }
 
-    var totalEval = percentChangeEval + marketChangeEvaluation;
+    var totalEval = percentChangeEval + marketChangeEvaluation + indexBEval + indexAEval;
     var finalEval = Math.abs(Math.round(totalEval));
 
     
   }
-  
-  
   
 }
