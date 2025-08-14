@@ -5,8 +5,7 @@ function checkFormStatus() {
   // ↑ insert google forms ID
   const exchange = SpreadsheetApp.openById();
   // ↑ insert spreadsheet ID
-  var marketState = exchange.getSheetByName('Data & Statistics').getRange().getValue();
-  // ↑ insert the cell used to track the open/close state of the exchange 
+  var marketState = exchange.getSheetByName('Data & Statistics').getRange('c1').getValue();
 
   var now = new Date();
   var isWeekday = now.getDay() >= 1 && now.getDay() <=5;
