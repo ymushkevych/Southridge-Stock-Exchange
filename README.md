@@ -1,5 +1,8 @@
-# Research-Paper-13.8.2025
+# On the Inner Workings of the Southridge Stock Exchange: A Case Study Into High School Economics
 A Semi-Professional Research Paper regarding a model stock exchange I designed for classroom use. 
+
+# Southridge Stock Exchange
+A model stock market that I made and that is described in the research paper
 
 # Licensing
 All licensing can be found on the second page of the actual paper. 
