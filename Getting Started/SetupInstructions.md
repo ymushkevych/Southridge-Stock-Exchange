@@ -8,6 +8,46 @@ _Refer to the images in the Getting Started Folder for a visual representation o
 4. Create the third tab `Stock Exchange` **This sheet should be hidden**
 5. Create the fourth tab `Buy & Sell Counts` **This sheet should be hidden**
 6. Create the fifth tab `Passwords` **This sheet should be hidden**
+7. In the `Data & Statistics` tab, in the A column, starting from row 3 and going down, insert the letter of the value column for each day. For the first 30 days, the value columns are
+
+$$
+K,
+L,
+Q,
+V,
+AA,
+AF,
+AK,
+AP,
+AU,
+AZ,
+BE,
+BJ,
+BO,
+BT,
+BY,
+CD,
+CI,
+CN,
+CS,
+CX,
+DC,
+DH,
+DM,
+DR,
+DW,
+EB,
+EG,
+EL,
+EQ,
+EV,
+FA,
+FF
+$$
+
+**Do not add the commas, they are there to make viewing the list easier, but will break the code if actually used**
+
+**I like to hide or make this column narrow**
 
 # Setting up Index A
 
@@ -22,6 +62,12 @@ _Refer to the images in the Getting Started Folder for a visual representation o
 1. In the 'Price Rank' column, insert `=match($L3, SORT($L$3:$L, 1, False), 0)`, where L is the value column for that specific market day. Click and drag to fill the entire column.
 2. In the 'Change Rank' column, insert `=match($N3, SORT($N$3:$N, 1, False), 0)`, where N is the percent change column for that specific market day. Click and drag to fill the entire column.
 3. In the 'Shares for Sale' column, insert `='Stock Exchange'!C5`. Click and drag to fill the entire column
+4. In cell 'B15' insert `=indirect($E$6 & 3)` Click and drag to fill the entire column. For an exchange of 40 stocks, you should end at 'B54'
+5. In cell 'E6' insert `=indirect("'Data & Statistics'!A" & G1+2)`
+6. In cell 'E7' insert `=indirect("'Data & Statistics'!A" & G1+1)`
+7. In cell 'E3' insert `=round(sum(indirect(E6 & 3):indirect(E6 & 42)), 2)`
+8. In cell 'E4' insert `=round(sum(indirect(E6 & 3):indirect(E6 & 42))-sum(K3:K42), 2)`
+9. In cell 'E5' insert `=round(sum(indirect(E6 & 3):indirect(E6 & 42))-sum(indirect(E7 & 3):indirect(E7 & 42)))`
 
 ## Stock Exchange
 
