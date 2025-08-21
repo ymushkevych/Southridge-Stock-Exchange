@@ -19,4 +19,4 @@ This repository includes
 2. Edits regarding the structure of the paper should be done through the discussions tab. Try to include images of the edited areas.
 
 # Contact Information
-1. All questions about the SSE or the paper should be addressed to ymushkevych@gmai.com
+1. All questions about the SSE or the paper should be addressed to ymushkevych@gmail.com
