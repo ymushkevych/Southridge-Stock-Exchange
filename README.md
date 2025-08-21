@@ -6,6 +6,10 @@
 5. [Collaborators](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#collaborators)
 6. [Contact Information](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#contact-information)
 
+# Images
+![Example Price Graph](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/Images/example_price_graph.png)
+![Price Change Tracker](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/Images/price_change_tracker.png)
+
 # Southridge Stock Exchange
 The Southridge Stock Exchange (SSE) is a model stock exchange designed to be used as an instructional tool for teaching financial literacy courses, especially at the High School level. 
 This repository includes 
