@@ -5,6 +5,7 @@
 4. [Editing & Contribution Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#editing--contribution-guidelines)
 5. [Collaborators](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#collaborators)
 6. [Contact Information](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#contact-information)
+7. [AI Use Transparency](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#ai-use-transparency)
 
 # Images
 ![Example Price Graph](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/Images/example_price_graph.png)
@@ -41,3 +42,9 @@ This repository includes
 
 # Contact Information
 All questions about the SSE or the paper should be addressed to ymushkevych@gmail.com
+
+# AI Use Transparency
+1. Part of the code for the SSE was written by ChatGPT model 4.
+2. The functions for the Lagrange Polynomial and Least Squares Regression Line (LSRL) were also provided by ChatGPT model 4.
+3. All work done by AI was double-checked and verified to be correct by a human.
+4. Use of AI was minimized as much as possible throughout this project and was used primarily as a teaching aid for coding sections I didn't understand, rather than a primary contributor to the project.
