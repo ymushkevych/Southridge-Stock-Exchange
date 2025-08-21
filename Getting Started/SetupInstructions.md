@@ -55,6 +55,14 @@ $$
 2. Name the first tab `Index A`
 3. Manually input the Bias and Reliability for each stock.
 
+# Setting up individual portfolios
+
+1. Make a Google Sheet for an investor
+2. Name the first tab `portfolio`
+3. In the 'A1' cell, insert the first and last name of the investor
+4. In the 'I2' cell, insert the password of the investor.
+5. In the 'G2' cell, insert the starting budget of the investor.
+
 # In-Sheet Code
 
 ## Data & Statistics
@@ -85,5 +93,12 @@ $$
 2. In the 'N3' cell, insert `=countif(H2:H41, "B")+countif(H2:H41, "A")`. Adjust 41 to the number of stocks in your exchange + 1.
 3. In the 'N4' cell, insert `=round((sumif(H2:H41, "B", I2:I41)+sumif(H2:H41, "A", I2:I41))/N3, 2)`
 
+## Individual Portfolios
 
+1. In the 'C42' cell, insert `=sum(C2:C41)`
+2. In the 'D42' cell, insert `=sum(D2:D41)`
+
+_again, note that 42 and 41 are just the number of stocks in market (40 in this case) + 2 and 1 respectively__
+
+3. In the 'G1' cell, insert `=C42+G2` 
 
