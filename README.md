@@ -1,10 +1,10 @@
 # Table of Contents
-1. [[Southridge Stock Exchange]]
-2. [[Installation Guidelines]]
-3. [[Licensing Guidelines]]
-4. [[Editing & Contribution Guidelines]]
-5. [[Collaborators]]
-6. [[Contact Information]]
+1. [Southridge Stock Exchange](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#southridge-stock-exchange)
+2. [Installation Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#installion-guidelines)
+3. [Licensing Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#licensing-guidelines)
+4. [Editing & Contribution Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#editing--contribution-guidelines)
+5. [Collaborators](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#collaborators)
+6. [Contact Information](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#contact-information)
 
 # Southridge Stock Exchange
 The Southridge Stock Exchange (SSE) is a model stock exchange designed to be used as an instructional tool for teaching financial literacy courses, especially at the High School level. 
