@@ -18,5 +18,14 @@ This repository includes
 1. Suggestions for software changes should be made as pull requests and mentioned in the discussions tab
 2. Edits regarding the structure of the paper should be done through the discussions tab. Try to include images of the edited areas.
 
+# Collaborators
+1. Yarema Mushkevych – Main Author and Primary SSE Coder
+2. Markus Walker – Index B manager and Secondary SSE Designer  
+3. Justus Whisenant – SSE beta tester and Junior SSE Designer
+4. Nolan Thurman – Index A manager and Lead SSE Designer
+5. James Hayward – SSE Beta Tester
+6. Rhys Principe – Reviewer and SSE Beta Tester
+7. Mel Harris – SSE Beta Tester
+
 # Contact Information
 1. All questions about the SSE or the paper should be addressed to ymushkevych@gmail.com
