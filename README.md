@@ -1,3 +1,11 @@
+# Table of Contents
+1. [[Southridge Stock Exchange]]
+2. [[Installation Guidelines]]
+3. [[Licensing Guidelines]]
+4. [[Editing & Contribution Guidelines]]
+5. [[Collaborators]]
+6. [[Contact Information]]
+
 # Southridge Stock Exchange
 The Southridge Stock Exchange (SSE) is a model stock exchange designed to be used as an instructional tool for teaching financial literacy courses, especially at the High School level. 
 This repository includes 
@@ -28,4 +36,4 @@ This repository includes
 7. Mel Harris – SSE Beta Tester
 
 # Contact Information
-1. All questions about the SSE or the paper should be addressed to ymushkevych@gmail.com
+All questions about the SSE or the paper should be addressed to ymushkevych@gmail.com
