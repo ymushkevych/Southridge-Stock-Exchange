@@ -12,7 +12,7 @@ This repository includes
 
 # Licensing Guidelines
 1. The SSE is published under Creative Commons BY NC SA (Attribution-NonCommercial-ShareAlike) 4.0
-2. The details of the license can be found in `LICENSING.md`, on the second page of the paper, and at [https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en](url)
+2. The details of the license can be found in `LICENSE.md`, on the second page of the paper, and at [https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en](url)
 
 # Editing & Contribution Guidelines
 1. Suggestions for software changes should be made as pull requests and mentioned in the discussions tab
