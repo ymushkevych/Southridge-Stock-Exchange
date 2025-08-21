@@ -142,3 +142,106 @@ function onFormSubmitHandler(e) {
     }
   }
 }
+
+function giftShares() {
+  const exchange = SpreadsheetApp.openById();
+  var marketDay = exchange.getSheetByName('Data & Statistics').getRange('G1').getValue();
+  // list of sheet IDs for every individual investor portfolio. should be in the samed order as passwords and names
+  const ids = [];
+  // insert stock tickers in the order they appear in on the sheet
+  const stocks = [];
+  // first and last names of investors
+  const names = [];
+  // investor emails
+  const emails = [];
+  // investment passwords
+  const passwords = [];
+    for (var i = 0; i < ids.length; i++) {
+    var sheet = SpreadsheetApp.openById(ids[i]);
+    for (var j = 0; j < stocks.length; j++) {
+      if (sheet.getSheetByName('portfolio').getRange('g7').getValue() === names[j]) {
+        for (var k = 0; k < stocks.length; k++) {
+          if (sheet.getSheetByName('portfolio').getRange('g6').getValue() === stocks[k]) {
+            var recipientSheet = SpreadsheetApp.openById(ids[j]);
+            var quantity = sheet.getSheetByName('portfolio').getRange('g5').getValue();
+            var currentQuantity = recipientSheet.getSheetByName('portfolio').getRange(k+2, 4).getValue();
+            recipientSheet.getSheetByName('portfolio').getRange(k+2, 4).setValue(currentQuantity + Math.abs(quantity));
+            var marketDay = exchange.getSheetByName('Data & Statistics').getRange('g1').getValue();
+            var price = exchange.getSheetByName('Chart Statistics').getRange(k+2, marketDay+1).getValue();
+            var currentWorth = recipientSheet.getSheetByName('portfolio').getRange(k+2, 3).getValue();
+            recipientSheet.getSheetByName('portfolio').getRange(k+2, 3).setValue(currentWorth + (Math.abs(quantity) * price));
+            var currentSenderQt = sheet.getSheetByName('portfolio').getRange(k+2, 4).getValue();
+            var currentSenderWrth = sheet.getSheetByName('portfolio').getRange(k+2, 3).getValue();
+            sheet.getSheetByName('portfolio').getRange(k+2, 4).setValue(currentSenderQt - Math.abs(quantity));
+            sheet.getSheetByName('portfolio').getRange(k+2, 3).setValue(currentSenderWrth - (Math.abs(quantity) * price));
+            sheet.getSheetByName('portfolio').getRange('g5').setValue("");
+            sheet.getSheetByName('portfolio').getRange('g6').setValue("");
+            sheet.getSheetByName('portfolio').getRange('g7').setValue("");
+            var responseCount = exchange.getSheetByName('Data & Statistics').getRange('e19').getValue();
+            var now = new Date();
+
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+1, 1).setValue(now.getMonth()+1 + '/' + now.getDate() + '/' + now.getFullYear() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + 00);
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+1, 2).setValue(names[j]);
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+1, 3).setValue(stocks[k]);
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+1, 4).setValue(currentQuantity);            
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+1, 5).setValue(-Math.abs(quantity));
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+1, 6).setValue(sheet.getSheetByName('portfolio').getRange('i2').getValue());
+
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+2, 1).setValue(now.getMonth()+1 + '/' + now.getDate() + '/' + now.getFullYear() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + 00);
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+2, 2).setValue(sheet.getSheetByName('portfolio').getRange('A1').getValue());
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+2, 3).setValue(stocks[k]);
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+2, 4).setValue(currentSenderQt);
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+2, 5).setValue(Math.abs(quantity));
+            exchange.getSheetByName('SSE Form Responses').getRange(responseCount+2, 6).setValue(sheet.getSheetByName('portfolio').getRange('i2').getValue());
+            MailApp.sendEmail(
+              emails[j],
+              'Share Gifted',
+              'You have been gifted ' + quantity + ' shares of ' + stocks[k]
+            );
+
+            var netWorth = sheet.getSheetByName('portfolio').getRange('G1').getValue();
+            var bankWorth = sheet.getSheetByName('portfolio').getRange('G2').getValue(); 
+            if (netWorth > bankWorth) {
+              if (netWorth > 5000000) {
+                var fee = 0.5
+              } else if (netWorth <= 5000000 && netWorth > 2500000) {
+                var fee = 0.33
+              } else if (netWorth <=2500000 && netWorth > 1500000) {
+                var fee = 0.27
+              } else if (netWorth <= 1500000 && netWorth > 850000) {
+                var fee = 0.12
+              } else if (netWorth <= 850000 && netWorth > 200000) {
+                var fee = 0.05
+              } else if (netWorth <= 200000 && netWorth > 50000) {
+                var fee = 0.03
+              } else if (netWorth <= 50000) {
+                var fee = 0.01
+              }
+            } else if (bankWorth > netWorth) {
+              if (bankWorth > 5000000) {
+                var fee = 0.5
+              } else if (bankWorth <= 5000000 && bankWorth > 2500000) {
+                var fee = 0.33
+              } else if (bankWorth <=2500000 && bankWorth > 1500000) {
+                var fee = 0.27
+              } else if (bankWorth <= 1500000 && bankWorth > 850000) {
+                var fee = 0.12
+              } else if (bankWorth <= 850000 && bankWorth > 200000) {
+                var fee = 0.05
+              } else if (bankWorth <= 200000 && bankWorth > 50000) {
+                var fee = 0.03
+              } else if (bankWorth <= 50000) {
+                var fee = 0.01
+              }
+            }
+            sheet.getSheetByName('portfolio').getRange('G2').setValue(bankWorth - (quantity * fee));
+            if (recipientSheet.getSheetByName('portfolio').getRange(k+2, 4).getValue() === 0) {
+              recipientSheet.getSheetByName('data').getRange(k+2, 3).setValue(marketDay);
+              sheet.getSheetByName('data').getRange(k+2, 4).setValue(marketDay);
+            }
+        }
+      }
+    }
+  }
+}
+}
