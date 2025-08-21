@@ -68,6 +68,8 @@ $$
 7. In cell 'E3' insert `=round(sum(indirect(E6 & 3):indirect(E6 & 42)), 2)`
 8. In cell 'E4' insert `=round(sum(indirect(E6 & 3):indirect(E6 & 42))-sum(K3:K42), 2)`
 9. In cell 'E5' insert `=round(sum(indirect(E6 & 3):indirect(E6 & 42))-sum(indirect(E7 & 3):indirect(E7 & 42)))`
+10. In cell 'E19' insert `=MAX(FILTER(ROW('SSE Form Responses'!B2:B), 'SSE Form Responses'!B2:B<>""))`
+11. In cell 'D20' insert `=countif('Stock Exchange'!B3:AU3, "Last Row")`
 
 ## Stock Exchange
 
