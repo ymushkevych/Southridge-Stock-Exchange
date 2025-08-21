@@ -1,11 +1,11 @@
 # Table of Contents
-1. [Southridge Stock Exchange](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#southridge-stock-exchange)
-2. [Installation Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#installion-guidelines)
-3. [Licensing Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#licensing-guidelines)
-4. [Editing & Contribution Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#editing--contribution-guidelines)
-5. [Collaborators](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#collaborators)
-6. [Contact Information](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#contact-information)
-7. [AI Use Transparency](https://github.com/ymushkevych/Southridge-Stock-Exchange/edit/main/README.md#ai-use-transparency)
+1. [Southridge Stock Exchange](https://github.com/ymushkevych/Southridge-Stock-Exchange/main/README.md#southridge-stock-exchange)
+2. [Installation Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/main/README.md#installion-guidelines)
+3. [Licensing Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/main/README.md#licensing-guidelines)
+4. [Editing & Contribution Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/main/README.md#editing--contribution-guidelines)
+5. [Collaborators](https://github.com/ymushkevych/Southridge-Stock-Exchange/main/README.md#collaborators)
+6. [Contact Information](https://github.com/ymushkevych/Southridge-Stock-Exchange/main/README.md#contact-information)
+7. [AI Use Transparency](https://github.com/ymushkevych/Southridge-Stock-Exchange/main/README.md#ai-use-transparency)
 
 # Images
 ![Example Price Graph](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/Images/example_price_graph.png)
