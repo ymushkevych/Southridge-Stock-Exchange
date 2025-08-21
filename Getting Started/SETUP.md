@@ -1,5 +1,10 @@
 _Refer to the images in the Getting Started Folder for a visual representation of how each tab should roughly look_
 
+# A note on listing stocks
+
+1. Make sure that stocks always appear in the same order across all sheets. If in one sheet, 'stock A' is on the first possible row, and 'stock B' is on the second possible row, they will always be in that order.
+2. When determining tickers, make them 3-5 characters long (I prefer 4), and make them understandable. Tickers should be easy to remember as they are a shorthand for writing stocks, and if an investor has to look up what a ticker means every time, it'd just be easier to copy-paste the actual name of the stock. 
+
 # Setting up the SSE
 
 1. Make a Google Sheet and designate it as your main exchange sheet.
