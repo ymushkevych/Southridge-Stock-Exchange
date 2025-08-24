@@ -283,7 +283,40 @@ function automateExchange() {
 
     // calculate total and final evals
 
-    var totalEval = percentChangeEval + marketChangeEvaluation + indexBEval + indexAEval + bidEval + sharesLeftEval + randomEval + transactionEvaluation + groupBiasEval + diversityEval;
+    var totalEval = 0;
+
+    if (Number.isNaN(percentChangeEval) == false) {
+      totalEval += percentChangeEval;
+    }
+    if (Number.isNaN(marketChangeEvaluation) == false) {
+      totalEval += marketChangeEvaluation;
+    }
+    if (Number.isNaN(indexBEval) == false) {
+      totalEval += indexBEval;
+    }
+    if (Number.isNaN(indexAEval) == false) {
+      totalEval += indexAEval;
+    }
+    if (Number.isNaN(bidEval) == false) {
+      totalEval += bidEval;
+    }
+    if (Number.isNaN(sharesLeftEval) == false) {
+      totalEval += sharesLeftEval;
+    }
+    if (Number.isNaN(randomEval) == false) {
+      totalEval += randomEval;
+    }
+    if (Number.isNaN(transactionEvaluation) == false) {
+      totalEval += transactionEvaluation;
+    }
+    if (Number.isNaN(groupBiasEval) == false) {
+      totalEval += groupBiasEval;
+    }
+    if (Number.isNaN(diversityEval) == false) {
+      totalEval += diversityEval;
+    }
+    
+
     var finalEval = Math.abs(Math.round(totalEval));
 
     // calculate the new value of the share based on evaluations
@@ -566,14 +599,14 @@ function automateExchange() {
         }
       }
     }
-  }
 
-  //reruns the code if an invalid newvalue is chosen
-    if (newValue != 'null' && newValue != "NaN") {
+      //reruns the code if an invalid newvalue is chosen
+    if (newValue != null || Number.isNaN(newValue) == true) {
       exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn + 5).setValue("$" + newValue);
     } else {
       automateExchange();
     }
+  }
   }
 
   if (now.getDay() == 1) {
