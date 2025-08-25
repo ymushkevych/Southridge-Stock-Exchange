@@ -287,7 +287,7 @@ function automateExchange() {
 
     var evalParameters = [percentChangeEval, marketChangeEvaluation, indexBEval, indexAEval, bidEval, sharesLeftEval, randomEval, transactionEvaluation, groupBiasEval, diversityEval]; 
     for (var j = 0; j < 10; j++) {
-     if (Number.isNaN(evalParamters[j]) == false || evalParameters[j] != null) {
+     if (Number.isNaN(evalparameters[j]) == false || evalParameters[j] != null) {
         totalEval += evalParameters[j];
       } 
     }
