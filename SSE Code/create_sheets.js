@@ -35,7 +35,7 @@ function configureNamesAndEmails() {
 
   var passwordIndex = items.findIndex(passwordList => passwordList.getTitle() === passwordQ);
   var passwordList = items[passwordIndex];
-  var password = target.getRepsonseForItem(passwordList).getResponse();
+  var password = target.getResponseForItem(passwordList).getResponse();
 
 
   names.push(name);
@@ -48,12 +48,15 @@ function configureNamesAndEmails() {
 function createSheets(names, emails, passwords) {
   var ids = []; //do not edit
 
-  for (var i = 0; i < emails; i++) {
-    var templateSheet = DriveApp.getFileById(); //make an example portfolio sheet with the proper functions inserted and copy-paste the ID into this line. 
-    var portfolioSheet = templateSheet.makeCopy("Individual Portfolio Sheet: " + names[i]);
+  for (var i = 0; i < emails.length; i++) {
+    var templateSheet = DriveApp.getFileById('1G1qc6qugGA_DiCfq-DLu4SV5IcD9uWsdXTLw4PDjMOo');
+    var templateCopy = templateSheet.makeCopy("Individual Portfolio Sheet: " + names[i]);
+    var portfolioSheet = SpreadsheetApp.open(templateCopy);
     var tab = portfolioSheet.getActiveSheet();
+    tab.setName('portfolio');
     tab.getRange("A1").setValue(names[i]);
     tab.getRange("I2").setValue(passwords[i])
+    
     var driveFile = DriveApp.getFileById(portfolioSheet.getId());
     driveFile.addEditor(emails[i]);
 
@@ -62,12 +65,13 @@ function createSheets(names, emails, passwords) {
     var unprotected = tab.getRange('G5:G7');
     protection.setUnprotectedRanges([unprotected]);
 
-    var id = ss.getId();
+    var id = portfolioSheet.getId();
+
     ids.push(id);
   }
 
-  Console.log(ids);
-  Console.log(passwords);
-  Console.log(emails);
-  Console.log(names);
+  console.log(ids);
+  console.log(passwords);
+  console.log(emails);
+  console.log(names);
 }
