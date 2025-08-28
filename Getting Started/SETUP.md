@@ -13,46 +13,10 @@ _Refer to the images in the Getting Started Folder for a visual representation o
 4. Create the third tab `Stock Exchange` **This sheet should be hidden**
 5. Create the fourth tab `Buy & Sell Counts` **This sheet should be hidden**
 6. Create the fifth tab `Passwords` **This sheet should be hidden**
-7. In the `Data & Statistics` tab, in the A column, starting from row 3 and going down, insert the letter of the value column for each day. For the first 30 days, the value columns are
+7. In the `Data & Statistics` tab, in the A column, starting from row 3 and going down, insert the letter(s) of the value column for each day.
+8. Make an example portfolio sheet and activate the `create_sheets.js` script. 
 
-$$
-K,
-L,
-Q,
-V,
-AA,
-AF,
-AK,
-AP,
-AU,
-AZ,
-BE,
-BJ,
-BO,
-BT,
-BY,
-CD,
-CI,
-CN,
-CS,
-CX,
-DC,
-DH,
-DM,
-DR,
-DW,
-EB,
-EG,
-EL,
-EQ,
-EV,
-FA,
-FF
-$$
 
-**Do not add the commas, they are there to make viewing the list easier, but will break the code if actually used**
-
-**I like to hide or make this column narrow**
 
 # Setting up Index A
 
@@ -60,13 +24,9 @@ $$
 2. Name the first tab `Index A`
 3. Manually input the Bias and Reliability for each stock.
 
-# Setting up individual portfolios
+# Setting up example portfolio
 
-1. Make a Google Sheet for an investor
-2. Name the first tab `portfolio`
-3. In the 'A1' cell, insert the first and last name of the investor
-4. In the 'I2' cell, insert the password of the investor.
-5. In the 'G2' cell, insert the starting budget of the investor.
+1. Bank worth goes in cell 'G2'
 
 # In-Sheet Code
 
@@ -102,6 +62,7 @@ $$
 
 1. In the 'C42' cell, insert `=sum(C2:C41)`
 2. In the 'D42' cell, insert `=sum(D2:D41)`
+3. In the 'G1' cell, insert `=G2+C42`
 
 _again, note that 42 and 41 are just the number of stocks in market (40 in this case) + 2 and 1 respectively__
 
