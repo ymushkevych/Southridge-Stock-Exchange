@@ -22,7 +22,7 @@ function configureNamesAndEmails() {
   const items = form.getItems();
 
   const nameQ = "What is your name (First and Last)";
-  const emailQ = "What is your email? (School email recommended)";
+  const emailQ = "What is your email?";
   const passwordQ = "What do you want your password to be?";
 
   var nameIndex = items.findIndex(nameList => nameList.getTitle() === nameQ);
