@@ -49,7 +49,7 @@ function createSheets(names, emails, passwords) {
   var ids = []; //do not edit
 
   for (var i = 0; i < emails.length; i++) {
-    var templateSheet = DriveApp.getFileById('1G1qc6qugGA_DiCfq-DLu4SV5IcD9uWsdXTLw4PDjMOo');
+    var templateSheet = DriveApp.getFileById();
     var templateCopy = templateSheet.makeCopy("Individual Portfolio Sheet: " + names[i]);
     var portfolioSheet = SpreadsheetApp.open(templateCopy);
     var tab = portfolioSheet.getActiveSheet();
