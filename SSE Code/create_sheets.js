@@ -74,4 +74,6 @@ function createSheets(names, emails, passwords) {
   console.log(passwords);
   console.log(emails);
   console.log(names);
+
+  // copy-paste the lists that appear (you can view them in Executions → configureNamesAndEmails. If you already have other scripts running, you can use ctrl+f or find-in-page to help
 }
