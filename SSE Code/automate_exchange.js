@@ -1,3 +1,5 @@
+const stockCount = 40; // how many total stocks does your exchange track
+
 function activateTrigger() {
   // run this function once to set up the trigger. 
   //The associated function will run once, every day, at around 8:35 AM
@@ -35,24 +37,22 @@ function automateExchange() {
 
   var recentMarketChange = exchange.getSheetByName('Data & Statistics').getRange('E5').getValue();
 
-  // the row for the market average (in this case, 43), is the number of stocks in the market (40 for the example) + 3
-  var marketAverage = exchange.getSheetByName('Chart Statistics').getRange(43, marketDay + 1).getValue();
+  var marketAverage = exchange.getSheetByName('Chart Statistics').getRange(stockCount + 3, marketDay + 1).getValue();
 
   //indexA evaluation
   // the '42' in 'H42' is the number of stocks in the market (40 for the example) + 2
-  if (indexA.getSheetByName('Index A').getRange('H42').getValue() === 'A') {
+  if (indexA.getSheetByName('Index A').getRange(stockCOunt + 2, 7).getValue() === 'A') {
     var indexAEval = 2;
-  } else if (indexA.getSheetByName('Index A').getRange('H42').getValue() === 'B') {
+  } else if (indexA.getSheetByName('Index A').getRange(stockCOunt + 2, 7).getValue() === 'B') {
     var indexAEval = 1;
-  } else if (indexA.getSheetByName('Index A').getRange('H42').getValue() === 'C') {
+  } else if (indexA.getSheetByName('Index A').getRange(stockCOunt + 2, 7).getValue() === 'C') {
     var indexAEval = 0;
-  } else if (indexAEval.getSheetByName('Index A').getRange('H42').getValue() === 'D') {
+  } else if (indexAEval.getSheetByName('Index A').getRange(stockCOunt + 2, 7).getValue() === 'D') {
     var indexAEval= -1;
   }
 
   //indexB evaluation
-  // 49 from number of stocks + 9
-  var indexBStatistic = exchange.getSheetByName('Chart Statistics').getRange(49, marketDay + 1).getValue();
+  var indexBStatistic = exchange.getSheetByName('Chart Statistics').getRange(stockCOunt + 9, 7, marketDay + 1).getValue();
   if ((indexBStatistic / marketAverage) >= 3) {
     var indexBEval = 2;
   } else if ((indexBStatistic / marketAverage) >= 2) {
@@ -70,7 +70,7 @@ function automateExchange() {
     var marketChangeEvaluation = -2;
   }
 
-  for (var i = 0; i < 40; i++) {
+  for (var i = 0; i < stockCount; i++) {
     // ↑ 40 can be changed to whatever the stock count is on your version of the market
 
     //change price based on bidding, mimics supply and demand equilibria.
@@ -615,7 +615,7 @@ function updateIndexB() {
     var i = 0;
 
     //find spot number 1
-    while (currentTarget === 1 && i < 40) {
+    while (currentTarget === 1 && i < stockCount) {
         if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
           if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue === 0) {
             currentHunt += 1;
@@ -630,7 +630,7 @@ function updateIndexB() {
       i += 1;
     }
     var i = 0;
-    while (currentTarget === 2 && i < 40) {
+    while (currentTarget === 2 && i < stockCount) {
         if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
           if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
             currentHunt += 1;
@@ -645,7 +645,7 @@ function updateIndexB() {
       i += 1;
     }
     var i = 0;
-    while (currentTarget === 3 && i < 40) {
+    while (currentTarget === 3 && i < stockCount) {
         if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
           if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
             currentHunt += 1;
@@ -660,7 +660,7 @@ function updateIndexB() {
       i += 1;
     }
     var i = 0;
-    while (currentTarget === 4 && i < 40) {
+    while (currentTarget === 4 && i < stockCount) {
         if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
           if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
             currentHunt += 1;
@@ -675,7 +675,7 @@ function updateIndexB() {
       i += 1;
     }
     var i = 0;
-    while (currentTarget === 5 && i < 40) {
+    while (currentTarget === 5 && i < stockCount) {
         if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
           if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
             currentHunt += 1;
@@ -690,7 +690,7 @@ function updateIndexB() {
       i += 1;
     }
     var i = 0;
-    while (currentTarget === 6 && i < 40) {
+    while (currentTarget === 6 && i < stockCount) {
         if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
           if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
             currentHunt += 1;
@@ -705,7 +705,7 @@ function updateIndexB() {
       i += 1;
     }
     var i = 0;
-    while (currentTarget === 7 && i < 40) {
+    while (currentTarget === 7 && i < stockCount) {
         if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
           if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
             currentHunt += 1;
@@ -721,7 +721,7 @@ function updateIndexB() {
       i += 1;
     }
     var i = 0;
-    while (currentTarget === 8 && i < 40) {
+    while (currentTarget === 8 && i < stockCount) {
         if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
           if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
             currentHunt += 1;
@@ -765,8 +765,7 @@ function updateMarketDay() {
     var marketDayColumn = 12 + ((marketDay - 2) * 5);
   }
 
-  // replace 40 with the number of stocks in your exchange
-  for (var i = 0; i < 40; i++) {
+  for (var i = 0; i < stockCount; i++) {
     // update market day by 1
     exchange.getSheetByName('Data & Statistics').getRange('E20').setValue('1');
     exchange.getSheetByName('Data & Statistics').getRange('G1').setValue(marketDay+1);
@@ -797,8 +796,8 @@ function updateMarketDay() {
   var indexAAverage = indexA.getSheetByName('Thurman Rating 1.1').getRange('N4').getValue();
 
   //again, replace 49 and 48 with the number of stocks in your exchange +9 and 8 respectively
-  exchange.getSheetByName('Chart Statistics').getRange(49, marketDay+2).setValue('$' + indexBAverage);
-  exchange.getSheetByName('Chart Statistics').getRange(48, marketDay+2).setValue('$' + indexAverage);
+  exchange.getSheetByName('Chart Statistics').getRange(stockCount+9, marketDay+2).setValue('$' + indexBAverage);
+  exchange.getSheetByName('Chart Statistics').getRange(stockCount+8, marketDay+2).setValue('$' + indexAverage);
 
   updateIndividualSheets();
 }
@@ -819,7 +818,7 @@ function updateIndividualSheets() {
 
     //replace 40 with the number of stocks in your exchange
 
-    for (var j = 0; j < 40; j++) {
+    for (var j = 0; j < stockCount; j++) {
       var updatedValue = (exchange.getSheetByName('Chart Statistics').getRange(j+2, marketDay+1).getValue() * sheet.getSheetByName('portfolio').getRange(j+2, 4).getValue());
       sheet.getSheetByName('portfolio').getRange(j+2, 3).setValue(updatedValue);
     }
