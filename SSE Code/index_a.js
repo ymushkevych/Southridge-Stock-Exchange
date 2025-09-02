@@ -1,3 +1,5 @@
+const stockCount = ; //how many stocks does your exchange track
+
 function activateIndexA() {
   ScriptApp.newTrigger("setIndexA")
   .timeBased()
@@ -22,7 +24,7 @@ function setIndexA() {
   // set a value  based on how much the price of a stock changed
   // replace 40 with the number of stocks in your exchange
   var profitIncrease = exchange.getSheetByName('Data & Statistics').getRange(3, marketDayColumn, 40).getValues(); 
-  for (var i = 0; i < 40; i++) {
+  for (var i = 0; i < stockCount; i++) {
     var val = profitIncrease[i][0];
 
     var result = 0;
@@ -50,10 +52,11 @@ function setIndexA() {
 
     index.getSheetByName('Index A').getRange(i + 2, 5).setValue(result);
 
-  // calculate group bias as the proportion of total stock trades that a stock makes up, and output that value in column D
+  // calculate group bias as the proportion of total stock trades that a stock makes up, and output that value in column D.
+  // replace 41 with the final row of the Index A sheet
   var biasIncrease = index.getSheetByName('Index A').getRange('B2:B41').getValues().flat().filter(String);  
   var dataList = exchange.getSheetByName('SSE Form Responses').getRange('C2:C').getValues().flat();
-  for (var i = 0; i < 40; i++) {
+  for (var i = 0; i < stockCount; i++) {
     var currentItem = biasIncrease[i];
 
     var count = dataList.filter(function(value) {
@@ -70,7 +73,7 @@ function setIndexA() {
   }
 
   // sum all the values in a row, round up, and output them in column G
-    for (var i = 0; i < 40; i++) {
+    for (var i = 0; i < stockCount; i++) {
       var biasValue = index.getSheetByName('Index A').getRange(i+2, 3).getValue();
       var groupBiasValue = index.getSheetByName('Index A').getRange(i+2, 4).getValue();
       var profitIncreaseValue = index.getSheetByName('Index A').getRange(i+2, 5).getValue();
@@ -82,7 +85,7 @@ function setIndexA() {
     }
 
     // give each stock a letter rating (A, B, C, D) depending on the corresponding number rating. 
-    for (var i = 0; i < 40; i++) {
+    for (var i = 0; i < stockCount; i++) {
       if (index.getSheetByName('Index A1').getRange(i+2, 7).getValue() >= 2 && index.getSheetByName('Index A').getRange(i+2, 7).getValue() <= 10) {
         index.getSheetByName('Index A').getRange(i+2, 8).setValue("D")
       } else if (index.getSheetByName('Index A').getRange(i+2, 7).getValue() >= 11 && index.getSheetByName('Index A').getRange(i+2, 7).getValue() <= 16) {
