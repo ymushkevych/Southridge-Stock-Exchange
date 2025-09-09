@@ -490,90 +490,96 @@ function automateExchange() {
     } else {
       var bubbleChance = Math.random() * (30 - 10) + 10;
     }
-    if (changeDir === 1) {
-      if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() > 0) {
-        if (newValue >= 2000) {
-          if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-            newValue += 0;
-          } else {
-            newValue = previousValue - (changeCount/1.4);
+    if (newValue > 2500) {
+      newValue += -1 * (Math.random() * (2000 - 750) + 750);
+    } else {
+      if (changeDir === 1) {
+        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() > 0) {
+          if (newValue >= 2000) {
+            if (Math.random() * (100 - 1) + 1 < bubbleChance) {
+              newValue += 0;
+            } else {
+              newValue = previousValue - (changeCount/1.4);
+            }
+          } else if (newValue >= 1500) {
+              if (Math.random() * (100 - 1) + 1 < bubbleChance) {
+                newValue += 0;
+              } else {
+                newValue = previousValue - (changeCount/2);
+              }
+          } else if (newValue >= 1000) {
+              if (Math.random() * (100 - 1) + 1 < bubbleChance) {
+                newValue += 0;
+              } else {
+                newValue = previousValue - (changeCount/2.4);
+              }
           }
-        } else if (newValue >= 1500) {
-          if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-            newValue += 0;
-          } else {
-            newValue = previousValue - (changeCount/2);
-          }
-        } else if (newValue >= 1000) {
-          if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-            newValue += 0;
-          } else {
-            newValue = previousValue - (changeCount/2.4);
+        } else if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() <= 0) {
+          if (newValue >= 1500) {
+            if (Math.random() * (90 - 1) + 1 < bubbleChance) {
+              newValue = previousValue - 50;
+            } else {
+              newValue = previousValue - (changeCount/1.4);
+            }
+          } else if (newValue >= 1000) {
+              if (Math.random() * (90 - 1) + 1 < bubbleChance) {
+                newValue = previousValue - 25;
+              } else {
+                newValue = previousValue - (changeCount/2);
+              }
+          } else if (newValue >= 800) {
+              if (Math.random() * (90 - 1) + 1 < bubbleChance) {
+                newValue = previousValue - 10;
+              } else {
+                newValue = previousValue - (changeCount/2.4);
+              }
           }
         }
-      } else if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() <= 0) {
-        if (newValue >= 1500) {
-          if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-            newValue = previousValue - 50;
-          } else {
-            newValue = previousValue - (changeCount/1.4);
+      } else if (changeDir === -1) {
+        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() > 0) {
+          if (newValue >= 2000) {
+            if (Math.random() * (100 - 1) + 1 < bubbleChance) {
+              newValue += 0;
+            } else {
+              newValue = previousValue - (changeCount * 2.4);
+            }
+          } else if (newValue >= 1500) {
+            if (Math.random() * (100 - 1) + 1 < bubbleChance) {
+              newValue += 0;
+            } else {
+              newValue = previousValue - (changeCount * 2);
+            }
+          } else if (newValue >= 1000) {
+            if (Math.random() * (100 - 1) + 1 < bubbleChance) {
+              newValue += 0;
+            } else {
+              newValue = previousValue - (changeCount * 1.4);
+            }
           }
-      } else if (newValue >= 1000) {
-        if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-          newValue = previousValue - 25;
-        } else {
-          newValue = previousValue - (changeCount/2);
-        }
-      } else if (newValue >= 800) {
-        if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-          newValue = previousValue - 10;
-        } else {
-          newValue = previousValue - (changeCount/2.4);
+        } else if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() <= 0) {
+          if (newValue >= 1500) {
+            if (Math.random() * (90 - 1) + 1 < bubbleChance) {
+              newValue = previousValue - 50;
+            } else {
+              newValue = previousValue - (changeCount * 2);
+            }
+          } else if (newValue >= 1000) {
+              if (Math.random() * (90 - 1) + 1 < bubbleChance) {
+                newValue = previousValue - 25;
+              } else {
+                newValue = previousValue - (changeCount * 1.4);
+              }
+          } else if (newValue >= 800) {
+              if (Math.random() * (90 - 1) + 1 < bubbleChance) {
+                newValue = previousValue - 10;
+              } else {
+                newValue = previousValue - (changeCount);
+              }
+          }
         }
       }
     }
-   } else if (changeDir === -1) {
-      if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() > 0) {
-        if (newValue >= 2000) {
-          if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-            newValue += 0;
-          } else {
-            newValue = previousValue - (changeCount * 2.4);
-          }
-        } else if (newValue >= 1500) {
-          if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-            newValue += 0;
-          } else {
-            newValue = previousValue - (changeCount * 2);
-          }
-        } else if (newValue >= 1000) {
-          if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-            newValue += 0;
-          } else {
-            newValue = previousValue - (changeCount * 1.4);
-          }
-        }
-      } else if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() <= 0) {
-        if (newValue >= 1500) {
-          if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-            newValue = previousValue - 50;
-          } else {
-            newValue = previousValue - (changeCount * 2);
-          }
-      } else if (newValue >= 1000) {
-        if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-          newValue = previousValue - 25;
-        } else {
-          newValue = previousValue - (changeCount * 1.4);
-        }
-      } else if (newValue >= 800) {
-        if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-          newValue = previousValue - 10;
-        } else {
-          newValue = previousValue - (changeCount);
-        }
-      }
-    }
+
       //reruns the code if an invalid new value is chosen
     if (newValue == null || Number.isNaN(newValue) == true) {
       exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn + 5).setValue("$" + newValue);
