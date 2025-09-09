@@ -38,6 +38,11 @@ function createSheets() {
 
     exchange.getSheetByName('Passwords').getRange(i+10, 2).setValue(responseSheet.getRange(i+2, 4).getValue());
     exchange.getSheetByName('Passwords').getRange(i+10, 1).setValue(responseSheet.getRange(i+2, 2).getValue());
+
+    exchange.getSheetByName('Stock Exchange').getRange(2, 4 + 4*i).setValue(names[i]);
+    exchange.getSheetByName('Stock Exchange').getRange(3, 4 + 4*i).setValue("Current Value");
+    exchange.getSheetByName('Stock Exchange').getRange(3, 4 + 1 + 4*i).setValue("Last Row");
+    exchange.getSheetByName('Stock Exchange').getRange(3, 4 + 2 + 4*i).setValue("Second to Last");
   }
 
   console.log(names);
