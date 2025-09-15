@@ -51,15 +51,40 @@ function automateExchange() {
     var indexAEval= -1;
   }
 
-  //indexB evaluation
-  var indexBStatistic = exchange.getSheetByName('Chart Statistics').getRange(stockCOunt + 9, 7, marketDay + 1).getValue();
-  if ((indexBStatistic / marketAverage) >= 3) {
-    var indexBEval = 2;
-  } else if ((indexBStatistic / marketAverage) >= 2) {
-    var indexBEval = 1;
-  } else if ((indexBStatistic / marketAverage) >= 1) {
-    var indexBEval = 0;
+  //security Evaluation
+  var securityStockPrep = [];
+
+  for (var j = 0; j < 40; j++) {
+    var count = 0;
+    for (var k = 0; k < marketDay; k++) {
+      if (exchange.getSheetByName('Data & Statistics').getRange(j, 21+ k*5 + 4) <= 3) {
+        count++;
+      }
+    }
+    securityStockPrep.push(count);
+  } 
+
+  var marketAverage = exchange.getSheetByName('Chart Statistics').getRange(stockCount + 3, marketDay + 1).getValue(); 
+
+  var maxSecurity = Math.max(securityStockPrep);
+  securityStockPrep.pop(securityStockPrep.indexOf(maxSecurity));
+
+  var maxSecurity2 = Math.max(securityStockPrep);
+  securityStockPrep.pop(securityStockPrep.indexOf(maxSecurity2));
+
+  var maxSecurity3 = Math.max(securityStockPrep);
+  securityStockPrep.pop(securityStockPrep.indexOf(maxSecurity3));
+
+  var securityAverage = (exchange.getSheetByName('Chart Statistics').getRange(maxSecurity-1, marketDay+1).getValue() + exchange.getSheetByName('Chart Statistics').getRange(maxSecurity2-1, marketDay+1).getValue() + exchange.getSheetByName('Chart Statistics').getRange(maxSecurity3-1, marketDay+1)).getValue()/3;
+
+  if ((securityAverage / marketAverage) >= 3) {
+    var securityEval = 2;
+  } else if ((securityAverage / marketAverage) >= 2) {
+    var securityEval = 1;
+  } else if ((securityAverage / marketAverage) >= 1) {
+    var securityEval = 0;
   }   
+
   
   //market change Evaluation
   if (recentMarketChange > 0) {
@@ -285,7 +310,7 @@ function automateExchange() {
 
     var totalEval = 0
 
-    var evalParameters = [percentChangeEval, marketChangeEvaluation, indexBEval, indexAEval, bidEval, sharesLeftEval, randomEval, transactionEvaluation, groupBiasEval, diversityEval]; 
+    var evalParameters = [percentChangeEval, marketChangeEvaluation, indexAEval, bidEval, sharesLeftEval, randomEval, transactionEvaluation, groupBiasEval, diversityEval, securityEval]; 
     for (var j = 0; j < 10; j++) {
      if (Number.isNaN(evalParameters[j]) == false || evalParameters[j] != null) {
         totalEval += evalParameters[j];
@@ -580,176 +605,9 @@ function automateExchange() {
       }
     }
 
-      //reruns the code if an invalid new value is chosen
-    if (newValue == null || Number.isNaN(newValue) == true) {
-      exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn + 5).setValue("$" + newValue);
-    } else {
-      automateExchange();
+  if (i+2 == maxSecurity || i+2 == maxSecurity2 || i+2 == maxSecurity3) {
+      newValue = previousValue + (changeDir * changeCount * (Math.random() * (2.5-1.01) + 1.01));
     }
-  }
-  }
-
-  if (now.getDay() == 1) {
-    updateIndexB();
-  } else {
-    updateMarketDay();
-  }
-}
-
-function updateIndexB() {
-  const exchange = SpreadsheetApp.openById();
-
-  var now = new Date();
-
-  if (now.getHours() <= 10) {
-    var marketDay = exchange.getSheetByName('Data & Statistics').getRange('G1').getValue();
-  } else if (now.getHours() > 10) {
-    var marketDay = exchange.getSheetByName('Data & Statistics').getRange('G1').getValue()-1;
-  }
-
-  if (marketDay === 1) {
-    var marketDayColumn = 10;
-  } else if (marketDay > 1) {
-    var marketDayColumn = 12 + ((marketDay - 2) * 5);
-  }
-
-  var indexBItems = [exchange.getSheetByName('Data & Statistics').getRange('E21').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E22').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E23').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E24').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E25').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E26').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E27').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E28').getValue()];
-
-  var walkerIndexItems = [];
-    var currentTarget = 1
-    var currentHunt = 1;
-    var i = 0;
-
-    //find spot number 1
-    while (currentTarget === 1 && i < stockCount) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
-          if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue === 0) {
-            currentHunt += 1;
-            i = 0;
-            continue;
-          }
-          currentTarget += 1;
-          currentHunt += 1;
-          indexBItems.push(i+2);
-          i = 0;
-      }
-      i += 1;
-    }
-    var i = 0;
-    while (currentTarget === 2 && i < stockCount) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
-          if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
-            currentHunt += 1;
-            i = 0;
-            continue;
-          }
-          currentTarget += 1;
-          currentHunt += 1;
-          indexBItems.push(i+2);
-          i = 0;
-      }
-      i += 1;
-    }
-    var i = 0;
-    while (currentTarget === 3 && i < stockCount) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
-          if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
-            currentHunt += 1;
-            i = 0;
-            continue;
-          }
-          currentTarget += 1;
-          currentHunt += 1;
-          indexBItems.push(i+2);
-          i = 0;
-      }
-      i += 1;
-    }
-    var i = 0;
-    while (currentTarget === 4 && i < stockCount) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
-          if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
-            currentHunt += 1;
-            i = 0;
-            continue;
-          }
-          currentTarget += 1;
-          currentHunt += 1;
-          indexBItems.push(i+2);
-          i = 0;
-      }
-      i += 1;
-    }
-    var i = 0;
-    while (currentTarget === 5 && i < stockCount) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
-          if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
-            currentHunt += 1;
-            i = 0;
-            continue;
-          }
-          currentTarget += 1;
-          currentHunt += 1;
-          indexBItems.push(i+2);
-          i = 0;
-      }
-      i += 1;
-    }
-    var i = 0;
-    while (currentTarget === 6 && i < stockCount) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
-          if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
-            currentHunt += 1;
-            i = 0;
-            continue;
-          }
-          currentTarget += 1;
-          currentHunt += 1;
-          indexBItems.push(i+2);
-          i = 0;
-      }
-      i += 1;
-    }
-    var i = 0;
-    while (currentTarget === 7 && i < stockCount) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
-          if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
-            currentHunt += 1;
-
-          var i = 0;
-            continue;
-          }
-          currentTarget += 1;
-          currentHunt += 1;
-          indexBItems.push(i+2);
-          i = 0;
-      }
-      i += 1;
-    }
-    var i = 0;
-    while (currentTarget === 8 && i < stockCount) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+8).getValue() === currentHunt) {
-          if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).getValue() === 0) {
-            currentHunt += 1;
-            var i = 0;
-            continue;
-          }
-          currentTarget += 1;
-          currentHunt += 1;
-          indexBItems.push(i+2);
-          i = 0;
-      }
-      i += 1;
-    }
-
-  exchange.getSheetByName('Data & Statistics').getRange('E21').setValue(indexBItems[0]);
-  exchange.getSheetByName('Data & Statistics').getRange('E22').setValue(indexBItems[1]);
-  exchange.getSheetByName('Data & Statistics').getRange('E23').setValue(indexBItems[2]);
-  exchange.getSheetByName('Data & Statistics').getRange('E24').setValue(indexBItems[3]);
-  exchange.getSheetByName('Data & Statistics').getRange('E25').setValue(indexBItems[4]);
-  exchange.getSheetByName('Data & Statistics').getRange('E26').setValue(indexBItems[5]);
-  exchange.getSheetByName('Data & Statistics').getRange('E27').setValue(indexBItems[6]);
-  exchange.getSheetByName('Data & Statistics').getRange('E28').setValue(indexBItems[7]);
 
   updateMarketDay();
 }
@@ -795,14 +653,9 @@ function updateMarketDay() {
   const year = new Date().getFullYear();
   exchange.getSheetByName('Data & Statistics').getRange(1, marketDayColumn+5).setValue((month+1) + '/' + day + '/' + year + ' - day ' + (marketDay+1) + ' - ' + exchange.getSheetByName('Data & Statistics').getRange('g2').getValue());
   exchange.getSheetByName('Data & Statistics').getRange(2, marketDayColumn+5).setValue('value');
-
-  var indexBItems = [exchange.getSheetByName('Data & Statistics').getRange('E21').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E22').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E23').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E24').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E25').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E26').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E27').getValue(), exchange.getSheetByName('Data & Statistics').getRange('E28').getValue()];
-
-  var indexBAverage = (exchange.getSheetByName('Chart Statistics').getRange(indexBItems[0], marketDay+2).getValue() +   exchange.getSheetByName('Chart Statistics').getRange(indexBItems[1], marketDay+2).getValue() + exchange.getSheetByName('Chart Statistics').getRange(indexBItems[2], marketDay+2).getValue() + exchange.getSheetByName('Chart Statistics').getRange(indexBItems[3], marketDay+2).getValue() + exchange.getSheetByName('Chart Statistics').getRange(indexBItems[4], marketDay+2).getValue() + exchange.getSheetByName('Chart Statistics').getRange(indexBItems[5], marketDay+2).getValue() + exchange.getSheetByName('Chart Statistics').getRange(indexBItems[6], marketDay+2).getValue() +   exchange.getSheetByName('Chart Statistics').getRange(indexBItems[7], marketDay+2).getValue()) / 8;
   var indexAAverage = indexA.getSheetByName('Thurman Rating 1.1').getRange('N4').getValue();
 
   //again, replace 49 and 48 with the number of stocks in your exchange +9 and 8 respectively
-  exchange.getSheetByName('Chart Statistics').getRange(stockCount+9, marketDay+2).setValue('$' + indexBAverage);
   exchange.getSheetByName('Chart Statistics').getRange(stockCount+8, marketDay+2).setValue('$' + indexAverage);
 
   updateIndividualSheets();
