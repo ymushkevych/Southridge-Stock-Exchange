@@ -57,7 +57,7 @@ function automateExchange() {
   for (var j = 0; j < 40; j++) {
     var count = 0;
     for (var k = 0; k < marketDay; k++) {
-      if (exchange.getSheetByName('Data & Statistics').getRange(j, 21+ k*5 + 4) <= 3) {
+      if (exchange.getSheetByName('Data & Statistics').getRange(j, 21+ k*5 + 4).getValue() <= 3) {
         count++;
       }
     }
