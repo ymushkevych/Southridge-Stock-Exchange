@@ -598,7 +598,7 @@ function automateExchange() {
       }
     }
 
-  if (i+2 == maxSecurity || i+2 == maxSecurity2 || i+2 == maxSecurity3) {
+  if (i+2 == top3Securities[0] || i+2 == top3Securities[1] || i+2 == top3Securities[2]) {
       newValue = previousValue + (changeDir * changeCount * (Math.random() * (2.5-1.01) + 1.01));
     }
 
