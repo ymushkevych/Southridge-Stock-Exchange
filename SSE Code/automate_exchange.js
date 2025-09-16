@@ -66,16 +66,9 @@ function automateExchange() {
 
   var marketAverage = exchange.getSheetByName('Chart Statistics').getRange(stockCount + 3, marketDay + 1).getValue(); 
 
-  var maxSecurity = Math.max(securityStockPrep);
-  securityStockPrep.pop(securityStockPrep.indexOf(maxSecurity));
+  var top3Securities = [...securityStockPrep].sort((a, b) => b - a).slice(0, 3);
 
-  var maxSecurity2 = Math.max(securityStockPrep);
-  securityStockPrep.pop(securityStockPrep.indexOf(maxSecurity2));
-
-  var maxSecurity3 = Math.max(securityStockPrep);
-  securityStockPrep.pop(securityStockPrep.indexOf(maxSecurity3));
-
-  var securityAverage = (exchange.getSheetByName('Chart Statistics').getRange(maxSecurity-1, marketDay+1).getValue() + exchange.getSheetByName('Chart Statistics').getRange(maxSecurity2-1, marketDay+1).getValue() + exchange.getSheetByName('Chart Statistics').getRange(maxSecurity3-1, marketDay+1)).getValue()/3;
+  var securityAverage = (top3Securities[0] + top3Securities[1] + top3Securities[1])/3;
 
   if ((securityAverage / marketAverage) >= 3) {
     var securityEval = 2;
