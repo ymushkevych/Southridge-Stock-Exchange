@@ -21,7 +21,7 @@ This repository includes
 
 # Promotional Video
 
-[![](https://markdown-videos-api.jorgenkh.no/youtube/MR5h0REvqs4?si=8_IxOEiurrxM6pBs)](https://https://youtu.be/MR5h0REvqs4?si=8_IxOEiurrxM6pBs)
+[![](https://markdown-videos-api.jorgenkh.no/youtube/MR5h0REvqs4?si=8_IxOEiurrxM6pBs)](https://youtu.be/MR5h0REvqs4?si=8_IxOEiurrxM6pBs)
 
 # Installation Guidelines
 1. All setup instructions can be found in the `Getting Started` folder
