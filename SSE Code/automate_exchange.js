@@ -39,18 +39,6 @@ function automateExchange() {
 
   var marketAverage = exchange.getSheetByName('Chart Statistics').getRange(stockCount + 3, marketDay + 1).getValue();
 
-  //indexA evaluation
-  // the '42' in 'H42' is the number of stocks in the market (40 for the example) + 2
-  if (indexA.getSheetByName('Index A').getRange(stockCOunt + 2, 7).getValue() === 'A') {
-    var indexAEval = 2;
-  } else if (indexA.getSheetByName('Index A').getRange(stockCOunt + 2, 7).getValue() === 'B') {
-    var indexAEval = 1;
-  } else if (indexA.getSheetByName('Index A').getRange(stockCOunt + 2, 7).getValue() === 'C') {
-    var indexAEval = 0;
-  } else if (indexAEval.getSheetByName('Index A').getRange(stockCOunt + 2, 7).getValue() === 'D') {
-    var indexAEval= -1;
-  }
-
   //security Evaluation
   var securityStockPrep = [];
 
@@ -81,11 +69,11 @@ function automateExchange() {
   
   //market change Evaluation
   if (recentMarketChange > 0) {
-    var marketChangeEvaluation = 3;
+    var marketChangeEvaluation = 4;
   } else if (recentMarketChange < 0) {
-    var marketChangeEvaluation = -3;
+    var marketChangeEvaluation = -4;
   } else if (recentMarketChange === 0) {
-    var marketChangeEvaluation = -2;
+    var marketChangeEvaluation = -3;
   }
 
   for (var i = 0; i < stockCount; i++) {
@@ -172,31 +160,31 @@ function automateExchange() {
     var expected = 10000 + (marketDay * 50)
 
     if (sharesLeft >= expected * 10) {
-      var sharesLeftEval = -6;
+      var sharesLeftEval = -7;
     } else if (sharesLeft >= expected * 8) {
-      var sharesLeftEval = -5;
+      var sharesLeftEval = -6;
     } else if (sharesLeft >= expected * 6) {
-      var sharesLeftEval = -4;
+      var sharesLeftEval = -5;
     } else if (sharesLeft >= expected * 4) {
-      var sharesLeftEval = -3;
+      var sharesLeftEval = -4;
     } else if (sharesLeft >= expected * 2) {
-      var sharesLeftEval = -2;
+      var sharesLeftEval = -3;
     } else if (sharesLeft > expected) {
-      var sharesLeftEval = -1;
+      var sharesLeftEval = -2;
     } else if (sharesLeft === expected) {
       var sharesLeftEval = -1;
     } else if (sharesLeft >= expected * 0.5) {
-      var sharesLeftEval = 1;
-    } else if (sharesLeft >= expected * 0.25) {
       var sharesLeftEval = 2;
-    } else if (sharesLeft >= expected * 0.125) {
+    } else if (sharesLeft >= expected * 0.25) {
       var sharesLeftEval = 3;
-    } else if (sharesLeft >= expected *0.06125) {
+    } else if (sharesLeft >= expected * 0.125) {
       var sharesLeftEval = 4;
-    } else if (sharesLeft > 0) {
+    } else if (sharesLeft >= expected *0.06125) {
       var sharesLeftEval = 5;
-    } else if (sharesLeft <= 0) {
+    } else if (sharesLeft > 0) {
       var sharesLeftEval = 6;
+    } else if (sharesLeft <= 0) {
+      var sharesLeftEval = 7;
     }
 
     // diversity eval
@@ -206,9 +194,9 @@ function automateExchange() {
 
     for (var k = 0; k < exchange.getSheetByName('Data & Statistics').getRange('D20').getValue(); k++) {
       if (exchange.getSheetByName('Stock Exchange').getRange(4 * (k+1), i+5).getValue != 0) {
-        diversityEval += 1;
+        diversityEval += 1.4;
       } else {
-        diversityEval += -0.3;
+        diversityEval += -0.4;
       }
     }
 
@@ -219,7 +207,7 @@ function automateExchange() {
     var groupBias = indexA.getSheetByName('Index A').getRange(i+2, 4).getValue();
 
     if (groupBias >= 0.7) {
-      var groupBiasEval = -3;
+      var groupBiasEval = -4;
     } else if (groupBias < 0.7 && groupBias >= 0.25) {
       var groupBiasEval = 6;
     } else {
@@ -272,39 +260,39 @@ function automateExchange() {
     
     if ((buyCounts > sellCounts) && sellCounts > 0) {
       if (buyCounts / sellCounts >= 6) {
-        var transactionEvaluation = 4;
+        var transactionEvaluation = 5;
       } else if (buyCounts / sellCounts >= 4) {
-        var transactionEvaluation = 3;
+        var transactionEvaluation = 4;
       } else if (buyCounts / sellCounts >= 2) {
-        var transactionEvaluation = 2;
+        var transactionEvaluation = 3;
       } else if (buyCounts / sellCounts >= 1) {
-        var transactionEvaluation = 1;
+        var transactionEvaluation = 2;
       }
 
     } else if ((buyCounts < sellCounts) &&  buyCounts > 0) {
       if (sellCounts / buyCounts >= 6) {
-         var transactionEvaluation = -4;
+         var transactionEvaluation = -5;
       } else if (sellCounts / buyCounts >= 4) {
-        var transactionEvaluation = -3;
+        var transactionEvaluation = -4;
       } else if (sellCounts / buyCounts >= 2) {
-        var transactionEvaluation = -2;
+        var transactionEvaluation = -3;
       } else if (sellCounts / buyCounts >= 1) {
-        var transactionEvaluation = -1;
+        var transactionEvaluation = -2;
       }
     } else if ((buyCounts > sellCounts) && sellCounts === 0) {
-      var transactionEvaluation = 2;
+      var transactionEvaluation = 3;
     } else if ((buyCounts < sellCounts) && buyCounts === 0) {
-      var transactionEvaluation = -2;
+      var transactionEvaluation = -3;
     } else if (buyCounts === sellCounts) {
-      var transactionEvaluation = -1;
+      var transactionEvaluation = -2;
     }
 
     // calculate total and final evals
 
     var totalEval = 0
 
-    var evalParameters = [percentChangeEval, marketChangeEvaluation, indexAEval, bidEval, sharesLeftEval, randomEval, transactionEvaluation, groupBiasEval, diversityEval, securityEval]; 
-    for (var j = 0; j < 10; j++) {
+    var evalParameters = [percentChangeEval, marketChangeEvaluation, bidEval, sharesLeftEval, randomEval, transactionEvaluation, groupBiasEval, diversityEval, securityEval]; 
+    for (var j = 0; j < 9; j++) {
      if (Number.isNaN(evalParameters[j]) == false || evalParameters[j] != null) {
         totalEval += evalParameters[j];
       } 
