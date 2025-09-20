@@ -29,7 +29,7 @@ function setIndexA() {
   }
 
   // calculate group bias as the proportion of total stock trades that a stock makes up and output that value in column D
-  var biasIncrease = index.getSheetByName('Index A').getRange('B2:B41').getValues().flat().filter(String);  
+  var biasIncrease = index.getSheetByName('Index A').getRange(2, 2, stockCount+1, 1).getValues().flat().filter(String);  
   var dataList = exchange.getSheetByName('SSE Form Responses').getRange('C2:C').getValues().flat();
   for (var i = 0; i < 40; i++) {
     var currentItem = biasIncrease[i];
