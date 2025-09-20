@@ -55,7 +55,6 @@ function onFormSubmitHandler(e) {
 
   var row = stocks.indexOf(stock);
   var marketDay = exchange.getSheetByName('Data & Statistics').getRange('G1').getValue();
-  var marketDayColumn = (12 + (marketDay - 2) * 5);
   
   if (name === "") {
     var column = ;
@@ -68,7 +67,7 @@ function onFormSubmitHandler(e) {
   if (exchange.getSheetByName('Stock Exchange').getRange(row+6, column).getValue() !== "FRAUD DETECTED: LIED ABOUT NET WORTH" && exchange.getSheetByName('Stock Exchange').getRange(row+6, column).getValue() !== "FRAUD DETECTED: WRONG PASSWORD") {
     var netWorth = sheet.getSheetByName('portfolio').getRange('G1').getValue();
     var bankWorth = sheet.getSheetByName('portfolio').getRange('G2').getValue();
-    if (netWorth > 0) {
+    if (netWorth > 0 || bankWorth > 0) {
       if (sell < 0 && bankWorth > 0) {
         var currentValue = sheet.getSheetByName('portfolio').getRange(row + 2, 3).getValue(); 
         var currentCount = sheet.getSheetByName('portfolio').getRange(row + 2, 4).getValue();
