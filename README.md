@@ -1,11 +1,12 @@
 # Table of Contents
 1. [Southridge Stock Exchange](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#southridge-stock-exchange)
-2. [Installation Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#installion-guidelines)
-3. [Licensing Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#licensing-guidelines)
-4. [Editing & Contribution Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#editing--contribution-guidelines)
-5. [Collaborators](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#collaborators)
-6. [Contact Information](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#contact-information)
-7. [AI Use Transparency](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#ai-use-transparency)
+2. [Promotional Video](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#promotional-video)
+3. [Installation Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#installion-guidelines)
+4. [Licensing Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#licensing-guidelines)
+5. [Editing & Contribution Guidelines](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#editing--contribution-guidelines)
+6. [Collaborators](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#collaborators)
+7. [Contact Information](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#contact-information)
+8. [AI Use Transparency](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/README.md#ai-use-transparency)
 
 # Images
 ![Example Price Graph](https://github.com/ymushkevych/Southridge-Stock-Exchange/blob/main/Images/example_price_graph.png)
@@ -17,6 +18,10 @@ This repository includes
 1. The code for the SSE
 2. Setup instructions for running your own version of the SSE
 3. A semi-professional research paper about the SSE and its potential use-cases
+
+# Promotional Video
+
+[![](https://markdown-videos-api.jorgenkh.no/youtube/MR5h0REvqs4?si=8_IxOEiurrxM6pBs)](https://https://youtu.be/MR5h0REvqs4?si=8_IxOEiurrxM6pBs)
 
 # Installation Guidelines
 1. All setup instructions can be found in the `Getting Started` folder
