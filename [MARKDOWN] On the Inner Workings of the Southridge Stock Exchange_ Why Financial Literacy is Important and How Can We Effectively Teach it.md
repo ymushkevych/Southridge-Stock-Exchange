@@ -1,16 +1,20 @@
 # **On the Inner Workings of the Southridge Stock Exchange: Why Financial Literacy is Important and How Can We Effectively Teach it**
 
+\[REVISED EDITION\]
+
 Yarema B. Mushkevych, Markus S. H. Walker, Justus C. Whisenant, Nolan R. Thurman, James W. Hayward,  Rhys C. Principe, Mel R. Harris
 
-*September 3, 2025*
-
 # 
+
+9/24/2025
 
 Published under Creative Commons License CC BY-NC-SA
 
 Use of this paper or the materials presented within it for commercial purposes is strictly forbidden.  
 Credit must be given to the authors of this paper when citing it, and to the developers of the SSE (Yarema B. Mushkevych, Nolan R. Thurman, Markus S. H. Walker, and Justus C. Whisenant) when using it publicly.  
 Any copies or altered versions of the SSE must be published under the same license and with the same publication rules.
+
+Accompanying GitHub repository: [https://github.com/ymushkevych/Southridge-Stock-Exchange/](https://github.com/ymushkevych/Southridge-Stock-Exchange/)
 
 Questions should be forwarded to ymushkevych@gmail.com
 
@@ -48,7 +52,7 @@ If needed, the managers of the SSE have the ability to manually close the exchan
 **Changing Share Prices.** In order to provide a reason for investment, twice a day, once when the exchange opens, and once at noon, share prices change. In order to determine by how much prices change, an automatic system takes in the following inputs, grouped into two categories based on whether they track the exchange as a whole or an individual stock. In the first category, the algorithm tracks:
 
 1. The evaluation of the individual stock based on the Thurman Index  
-2. The ratio between the Walker Index Average and the overall market average, with a higher ratio being better  
+2. The ratio between the Security Average and the overall market average, with a higher ratio being better. The security average is the average price of the 3 shares that have been at the top of the market the most.  
 3. How has the total market value recently changed, with a positive change being good and a negative or null change being bad
 
 	In the second category, the algorithm tracks:
@@ -77,9 +81,9 @@ Using these formulas gives a situation where stocks with higher ratings are more
 	This ensures that stocks with higher buy bids (people being willing to buy shares for prices significantly above baseline valuation), high diversity (a wide variety of people are investing in the stock), and high group biases (unproportionately high amounts of transactions compared to other stocks) are more likely to be classified as experiencing a bubble than other stocks.  
 	Using the bubble rating of a stock, a random value is generated known as the bubble chance*\[Figure 9\]*. This will be used to determine how likely it is that the bubble will continue to grow before bursting. If the price of share exceeds $2,000, if a randomly generated number between 1 and 100 is less than or equal to the bubble chance, nothing happens. Otherwise, the new share price is recalculated as the previous value minus the calculated change in share price divided by 1.4. For $1,500, the penalty is the calculated change in share price divided by 2, and for $1,000, the penalty is the calculated change in share price divided by 2.4. This means that the higher the price of a share, the more it drops by if the bubble bursts.   
 	It is important to note that in the SSE bubbles don’t burst like they do in traditional markets. If on one day the price of share rapidly falls, it may still surge back up to $1,000, $1,500, $2,000, or even more the next. This system is designed only to prevent as many stocks as possible from having unrealistically inflated share prices. However, stocks that recently dropped in price are more likely to continue dropping, especially if they have low bubble ratings.   
-	**Indexes.** As mentioned, the exchange is evaluated partially by two independent indices: the Thurman Index and the Walker Index.  
-The Walker Index is the simpler of the two to understand. The index tracks the top 8 valued stocks in the exchange by price, given that the stock is active. Every Monday, assuming the exchange is open and has updated, the Walker Index updates.  
-The Thurman index takes into account how much a stock’s price has changed, what percent of the total transactions come from that stock, how likely the business associated with the stock is to continue growing, and a bias factor based on the personal interests of the manager of the Thurman Index.
+	**Indices.** As mentioned, the exchange is evaluated partially by the Thurman Index.  
+The Thurman index takes into account how much a stock’s price has changed, what percent of the total transactions come from that stock, and what trend is the stock following.   
+The SSE also takes into account 3 “security stocks.” These are evaluated as the 3 stocks that have been at the top of the market the most. The SSE attempts to trend the other share prices to the average of the security stock share prices. Additionally, the security stocks have no upper limit unlike other stocks, but are more responsive to stimuli and can vary in value wildly.
 
 ## **Designing a Study** 
 
@@ -125,6 +129,8 @@ As with any study, errors are bound to occur. For the study detailed above,  a l
 * External teaching. *Similar to communicating with other people, participants may find it beneficial to watch instructional videos or read informational articles on financial literacy and management other than those provided by the study’s course, thus tampering with the results of the study.*  
 * Poor retention of information. *Some participants may have a harder time retaining the information taught in the study’s educational course.*   
 * Loss of interest. *Due to the long, and generally boring nature of the study, especially given its more academic structure, many participants may lose interest in the study and end up obfuscating data*
+
+# 
 
 # **Conclusion**
 
@@ -283,7 +289,7 @@ f(x)=y1\*ℓ1(x)+y2\*ℓ2(x)+y3\*ℓ3(x), where
 
 *Example of a properly setup portfolio*  
 ![][image3]  
-The stocks and their tickers used in any potential study need not be identical to those in the SSE, and in fact it is highly encouraged to have custom stocks, however, they must be the same across all tools and code associated with the particular model used in the study. 
+The stocks and their tickers used in any potential study need not be identical to those in the SSE, however, they must be the same across all tools and code associated with the particular model used in the study. 
 
 ## **Figure 11**
 
@@ -293,6 +299,20 @@ In the **Exchange Automator** section of the code,
 1. Go to the ***updateIndividualSheets*** function and insert the id of the sheet in the *ids* list. 
 
    where the id of the sheet is the highlighted portion of the following link: https://docs.google.com/spreadsheets/d/1FzTs8Kkvp2KMUBi3C1qqZYow5CvjTndwWJP3V\_fygpA/edit?gid=1911362316\#gid=1911362316
+
+2. Optionally, go to the ***sendEmails*** function and insert the following code
+
+   `MailApp.sendEmail(`
+
+      `'[TARGET EMAIL]',`
+
+      `'SSE Daily Update #' + (marketDay-2),`
+
+      `'This is the ' + (marketDay-2) + 'th daily update bringing you info about the SSE.' + 'This morning, the SSE opened with a net worth of $' + netWorth + ', a net change of $' + netChange + '. To stop receiving these daily update emails, email any of the SSE moderators',`
+
+    `);`
+
+   If you wish to update participants of a study or general users of the SSE when and in what state the exchange opens. 
 
 	In the **Selling** section of the code,
 
