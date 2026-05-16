@@ -1,52 +1,48 @@
+function trigger() {
+  ScriptApp.newTrigger("createSheets")
+  .forForm(signupForm)
+  .onFormSubmit()
+  .create();
+}
+
 function createSheets() {
-  var ids = [];
-  var emails = [];
-  var passwords = [];
-  var names = [];
+  let signup = signupForm.getResponses()[signupForm.getResponses().length - 1];
 
-  const responseSheet = SpreadsheetApp.openById().getSheetByName('Form Responses 1'); //link the google form used to collect responses into a sheet and copy-paste the ID
+  items = signupForm.getItems();
 
-  const signupForm = FormApp.openById(); //signup form ID
+  nameIndex = items.findIndex(nameList => nameList.getTitle() === nameQuest);
+  nameList = items[nameIndex];
+  name = signup.getResponseForItem(nameList).getResponse();
 
-  const responses = signupForm.getResponses();
-  const formLength = responses.length;
+  passIndex = items.findIndex(passList => passList.getTitle() === passQuest);
+  passList = items[passIndex];
+  pass = signup.getResponseForItem(passList).getResponse();
+
+  let email = signup.getRespondentEmail();
+
+  let templateSheet = DriveApp.getFileById('1G1qc6qugGA_DiCfq-DLu4SV5IcD9uWsdXTLw4PDjMOo');
+  let templateCopy = templateSheet.makeCopy("Individual Portfolio Sheet: " + signupSheet.getRange(i+2, 2).getValue());
+  let portfolioSheet = SpreadsheetApp.open(templateCopy);
+  let tab = portfolioSheet.getSheetByName('portfolio');
+  tab.getRange("A1").setValue(name);
+  tab.getRange("K2").setValue(pass);
+
+  let driveFile = DriveApp.getFileById(portfolioSheet.getId());
+  driveFile.addEditor(signupSheet.getRange(i+2, 3).getValue());
+
+  let protection = tab.protect().setDescription("protected range");
+  tab = portfolioSheet.getSheetByName('data');
+  protection = tab.protect().setDescription("protected range");
+  tab = portfolioSheet.getSheetByName('chart');
+  protection = tab.protect().setDescription("protected range");
 
 
-  for (var i = 0; i < formLength; i++) {
-    var templateSheet = DriveApp.getFileById(); // design an example portfolio
-    var templateCopy = templateSheet.makeCopy("Individual Portfolio Sheet: " + responseSheet.getRange(i+2, 2).getValue());
-    var portfolioSheet = SpreadsheetApp.open(templateCopy);
-    var tab = portfolioSheet.getActiveSheet();
-    tab.setName('portfolio');
-    tab.getRange("A1").setValue(responseSheet.getRange(i+2, 2).getValue());
-    tab.getRange("I2").setValue(responseSheet.getRange(i+2, 4).getValue());
+  let id = portfolioSheet.getId();
+  ids.push(id); 
+  emails.push(email);
+  passwords.push(pass);
+  names.push(name);
 
-    var driveFile = DriveApp.getFileById(portfolioSheet.getId());
-    driveFile.addEditor(responseSheet.getRange(i+2, 3).getValue());
+  investors += 1;
 
-    var protection = tab.protect().setDescription("protected range");
-    protection.addEditor(responseSheet.getRange(i+2, 3).getValue());
-    var unprotected = tab.getRange('G5:G7');
-    protection.setUnprotectedRanges([unprotected]);
-
-    var id = portfolioSheet.getId();
-    ids.push(id);
-
-    // add password to main exchange sheet
-
-    const exchange = SpreadsheetApp.openById();
-
-    exchange.getSheetByName('Passwords').getRange(i+10, 2).setValue(responseSheet.getRange(i+2, 4).getValue());
-    exchange.getSheetByName('Passwords').getRange(i+10, 1).setValue(responseSheet.getRange(i+2, 2).getValue());
-
-    exchange.getSheetByName('Stock Exchange').getRange(2, 4*(i+1)).setValue(names[i]);
-    exchange.getSheetByName('Stock Exchange').getRange(3, 4*(i+1)).setValue("Current Value");
-    exchange.getSheetByName('Stock Exchange').getRange(3, 4*(i+1)+1).setValue("Last Row");
-    exchange.getSheetByName('Stock Exchange').getRange(3, 4*(i+1)+2).setValue("Second to Last");
-  }
-
-  console.log(names);
-  console.log(emails);
-  console.log(passwords);
-  
 }
