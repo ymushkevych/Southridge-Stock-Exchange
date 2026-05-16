@@ -1,25 +1,63 @@
-function checkFormStatus() {
-  // define basic variables
-  
-  const form =  FormApp.openById();
-  // ↑ insert google forms ID
-  const exchange = SpreadsheetApp.openById();
-  // ↑ insert spreadsheet ID
-  var marketState = exchange.getSheetByName('Data & Statistics').getRange('c1').getValue();
+function changeFormStatus() {
+  // defining variables and which forms and sheets to track
+  let marketState = dataStats.getRange('C1').getValue();
+  let currentTime = now.getHours() * 60 + now.getMinutes();
+  let isOpenTime = currentTime >= openingTime && currentTime <= closingTime;
+  // defining the status variable to be "OPEN" if within open hours, else "CLOSED"
+  let status = (isWeekday && isOpenTime) ? "OPEN" : "CLOSED";
 
-  var now = new Date();
-  var isWeekday = now.getDay() >= 1 && now.getDay() <=5;
-  var currentTime = now.getHours() * 60 + now.getMinutes();
-  var openingTime = 8 * 60 + 25;
-  var closingTime = 14 * 60 + 35;
-  var isOpenTime = currentTime >= openingTime && currentTime <= closingTime;
+  if (isMarketDown == false) {
+    if (closeCell.getValue() === 'N') {
+      if (openCell.getValue() === 'Y') {
+        dataStats.getRange('C1').setValue('OPEN');
+      } else if (openCell.getValue() === 'N') {
+        dataStats.getRange('C1').setValue(status);
+      }
+    } else if (closeCell.getValue() === 'Y') {
+      dataStats.getRange('C1').setValue('CLOSED');
+    }
 
-  // if the time is within operating hours, set status to open, otherwise, closed
-  var status = (isWeekday && isOpenTime) ? "OPEN" : "CLOSED";
+    if (formCloseCell.getValue() === "N") {
+      if (formOpenCell.getValue() === "N") {
+        if (marketState === 'CLOSED') {
+          form.setAcceptingResponses(false);
+        } else if (marketState === 'OPEN') {
+          form.setAcceptingResponses(true);
+        }
+      } else if (formOpenCell.getValue() === "Y") {
+        if (formCloseCell.getValue() === "N") {
+          form.setAcceptingResponses(true);
+        } else {
+          if (marketState === 'CLOSED') {
+          form.setAcceptingResponses(false);
+        } else if (marketState === 'OPEN') {
+          form.setAcceptingResponses(true);
+        }
+        }
+      }
+    } else if (formCloseCell.getValue() === "Y") {
+      if (formOpenCell.getValue() === "N") {
+        form.setAcceptingResponses(false);
+      } else {
+        if (marketState === 'CLOSED') {
+          form.setAcceptingResponses(false);
+        } else if (marketState === 'OPEN') {
+          form.setAcceptingResponses(true);
+        }
+      }
+    }
+  }
+}
 
-  if (marketState === "OPEN") {
-    form.setAcceptingResponses(true);
-  } else if (marketState === "CLOSED") {
-    form.setAcceptingResponses(false);
-  } 
+function setResetPattern() {
+  ScriptApp.newTrigger("resetRunCount")
+  .timeBased()
+  .everyDays(1)
+  .atHour(14)
+  .nearMinute(35)
+  .create();
+}
+
+function resetRunCount() {
+  dataStats.getRange('E20').setValue('0');
 }
