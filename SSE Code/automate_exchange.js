@@ -1,666 +1,277 @@
-const stockCount = 40; // how many total stocks does your exchange track
-
 function activateTrigger() {
-  // run this function once to set up the trigger. 
-  //The associated function will run once, every day, at around 8:35 AM
-
-  ScriptApp.newTrigger("checkStatus")
+  ScriptApp.newTrigger("checkDevToolStatus")
   .timeBased()
   .everyDays(1)
   .atHour(8)
-  .nearMinute(35)
+  .nearMinute(25)
   .create();
 }
 
-function checkStatus() {
-  var now = new Date();
-  var isWeekday = now.getDay() >= 1 && now.getDay() <= 5;
-  const exchange = SpreadsheetApp.openById();
-  
-  if (isWeekday) {
+function checkDevToolStatus() {
+  if (closeCell.getValue() === 'N' && isWeekday && dataStats.getRange('E20').getValue() == 0 && isMarketDown === false) {
     automateExchange();
   }
 }
 
 function automateExchange() {
-  const exchange = SpreadsheetApp.openById();
-  const indexA = SpreadsheetApp.openById();
-
-  // insert the row number of the stock as it appears on the 'Chart Statistics' sheet
-  var fallStocks = [];
-  var winterStocks = [];
-  var springStocks = [];
-  var winterStocks = [];
-  
-  var marketDay = exchange.getSheetByName('Data & Statistics').getRange('G1').getValue();
-  var marketDayColumn = 12 + ((marketDay - 2) * 5);
-
-  var recentMarketChange = exchange.getSheetByName('Data & Statistics').getRange('E5').getValue();
-
-  var marketAverage = exchange.getSheetByName('Chart Statistics').getRange(stockCount + 3, marketDay + 1).getValue();
-
-  //security Evaluation
-  var securityStockPrep = [];
-
-  for (var j = 0; j < stockCount; j++) {
-    var count = 0;
-    for (var k = 0; k < marketDay; k++) {
-      if (exchange.getSheetByName('Data & Statistics').getRange(j, 21+ k*5 + 4).getValue() <= 3) {
-        count++;
-      }
-    }
-    securityStockPrep.push(count);
-  } 
-
-  var marketAverage = exchange.getSheetByName('Chart Statistics').getRange(stockCount + 3, marketDay + 1).getValue(); 
-
-  var top3Securities = [...securityStockPrep].sort((a, b) => b - a).slice(0, 3);
-
-  var securityAverage = (top3Securities[0] + top3Securities[1] + top3Securities[1])/3;
-
-  if ((securityAverage / marketAverage) >= 3) {
-    var securityEval = 2;
-  } else if ((securityAverage / marketAverage) >= 2) {
-    var securityEval = 1;
-  } else if ((securityAverage / marketAverage) >= 1) {
-    var securityEval = 0;
-  }   
-
-  
-  //market change Evaluation
-  if (recentMarketChange > 0) {
-    var marketChangeEvaluation = 4;
-  } else if (recentMarketChange < 0) {
-    var marketChangeEvaluation = -4;
-  } else if (recentMarketChange === 0) {
-    var marketChangeEvaluation = -3;
+  let recentMarketChange = dataStats.getRange('E5').getValue();
+  let marketChangeEvaluation = Math.round(recentMarketChange/15);
+  if (recentMarketChange >= 150) {
+    marketChangeEvaluation = 10;
+  } else if (recentMarketChange <= -150) {
+    marketChangeEvaluation = -10;
   }
 
-  for (var i = 0; i < stockCount; i++) {
+  for (let i = 0; i < stockCount; i++) {
+    // bias
 
-    //change price based on bidding, mimics supply and demand equilibria.
-
-    if (exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 4).getValue() > 0 && exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 4).getValue() != "") {
-      var buyBid = exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 4).getValue();
-    } else {
-      var buyBid = exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() + (Math.random() * (15 - -60) + -60);
+    let decay = 0.25;
+    let biasEval = biases.getRange(i+2, 3).getValue();
+    biases.getRange(i+2, 3).setValue(biasEval*decay);
+    if (Math.abs(biases.getRange(i+2, 3).getValue()) <= 0.125) {
+      biases.getRange(i+2, 3).setValue(0);
     }
 
-    if (indexA.getSheetByName('Index A').getRange(i+2, 8).getValue() === "A") {
-      if (buyBid > exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue()) {
-        exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).setValue(buyBid + 70);
-      } else if (buyBid <= exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue()) {
-        exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).setValue(exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() + 55);
-      }
-    } else if (indexA.getSheetByName('Index A').getRange(i+2, 8).getValue() === "B") {
-      if (buyBid > exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue()) {
-        exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).setValue(buyBid + 50);
-      } else if (buyBid <= exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue()) {
-        exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).setValue(exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() + 30);
-      }
-    } else if (indexA.getSheetByName('Index A').getRange(i+2, 8).getValue() === "C") {
-      if (buyBid > exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue()) {
-        exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).setValue(buyBid + 33);
-      } else if (buyBid <= exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue()) {
-        exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).setValue(exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() + 25);
-      }
-    } else if (indexA.getSheetByName('Index A').getRange(i+2, 8).getValue() === "D") {
-      if (buyBid > exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue()) {
-        exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).setValue(buyBid + 20);
-      } else if (buyBid <= exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue()) {
-        exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).setValue(exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() + 12);
-      }
-    } 
-
-    var sellBid = exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).getValue();
-
-    var averagePrice = (sellBid+buyBid)/2;
-    if (exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() > averagePrice) {
-      var bidEval = -5;
-    } else {
-      var bidEval = 5;
+    let localChange = dataStats.getRange(i+3, marketDayColumn+1).getValue();
+    let localChangeEval = Math.round(10 * Math.sin(localChange * 0.155));
+    if (localChange >= 30 || localChange <= -10) {
+      localChangeEval = -10;
     }
 
-    exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 4).setValue(0);
-    exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 5).setValue(0);
-
-
-    //Growth Evaluation
-
-    var percentChangeTotal = (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn + 2).getValue()) + (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue());
-    if (percentChangeTotal*10 >= 8) {
-      var percentChangeEval = 10;
-    } else if(percentChangeTotal*10 >= 6) {
-      var percentChangeEval = 8;
-    } else if (percentChangeTotal*10 >= 4) {
-      var percentChangeEval = 6;
-    } else if (percentChangeTotal*10 >= 2) {
-      var percentChangeEval = 4;
-    } else if (percentChangeTotal*10 > 0) {
-      var percentChangeEval = 2;
-    } else if (percentChangeTotal*10 === 0) {
-      var percentChangeEval = 0;
-    } else if (percentChangeTotal*10 >= -2) {
-      var percentChangeEval = -2;
-    } else if (percentChangeTotal*10 >= -4) {
-      var percentChangeEval = -4;
-    } else if (percentChangeTotal*10 >= -6) {
-      var percentChangeEval = -6;
-    } else if (percentChangeTotal*10 >= -8) {
-      var percentChangeEval = -8;
-    } else if (percentChangeTotal*10 < -8) {
-      var percentChangeEval = -10;
-    }
-
-    // shares left evaluation
-    // more shares in the market = less buying of shares = prices go down to attract potential buyers. 
-
-    var sharesLeft = exchange.getSheetByName('Data & Statistics').getRange(i+3, 10).getValue();
-    var expected = 10000 + (marketDay * 50)
-
-    if (sharesLeft >= expected * 10) {
-      var sharesLeftEval = -7;
-    } else if (sharesLeft >= expected * 8) {
-      var sharesLeftEval = -6;
-    } else if (sharesLeft >= expected * 6) {
-      var sharesLeftEval = -5;
-    } else if (sharesLeft >= expected * 4) {
-      var sharesLeftEval = -4;
-    } else if (sharesLeft >= expected * 2) {
-      var sharesLeftEval = -3;
-    } else if (sharesLeft > expected) {
-      var sharesLeftEval = -2;
-    } else if (sharesLeft === expected) {
-      var sharesLeftEval = -1;
-    } else if (sharesLeft >= expected * 0.5) {
-      var sharesLeftEval = 2;
-    } else if (sharesLeft >= expected * 0.25) {
-      var sharesLeftEval = 3;
-    } else if (sharesLeft >= expected * 0.125) {
-      var sharesLeftEval = 4;
-    } else if (sharesLeft >= expected *0.06125) {
-      var sharesLeftEval = 5;
-    } else if (sharesLeft > 0) {
-      var sharesLeftEval = 6;
-    } else if (sharesLeft <= 0) {
-      var sharesLeftEval = 7;
-    }
-
-    // diversity eval
-    // the more investors have a share. i.e., the more diversity a share holds, the more likely it is to be stable, and so, prices rise.
-
-    var diversityEval = 0;
-
-    for (var k = 0; k < exchange.getSheetByName('Data & Statistics').getRange('D20').getValue(); k++) {
-      if (exchange.getSheetByName('Stock Exchange').getRange(4 * (k+1), i+5).getValue != 0) {
-        diversityEval += 1.4;
-      } else {
-        diversityEval += -0.4;
-      }
-    }
-
-    // group bias eval
-    // if a stock is being traded too often or not often enough, the price goes down
-    // to my knowledge, this doesn't really reflect anything; it's mainly there to prevent investors from over-investing in one stock 
-
-    var groupBias = indexA.getSheetByName('Index A').getRange(i+2, 4).getValue();
-
-    if (groupBias >= 0.7) {
-      var groupBiasEval = -4;
-    } else if (groupBias < 0.7 && groupBias >= 0.25) {
-      var groupBiasEval = 6;
-    } else {
-      var groupBiasEval = -6;
-    }
-
-    // average eval
-    // if share price is below or equal to market average, increase price; otherwise, decrease price
-    // This should create a pattern where the price of a share rises and then drops again, creating a pseudo market curve.
-
-    if (exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() > marketAverage) {
-      var averageEval = -6;
-    } else if (exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() < marketAverage) {
-      var averageEval = 6;
-    } else if (exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() === marketAverage) {
-      var averageEval = 4;
-    }
-
-    // bias evaluation
-    // random increase or decrease in evaluation based on some pre-determined metric
+    let dataList = formResponses.getRange('D2:D').getValues().flat();
+    let currentItem = tickers[i];
+    let count = dataList.filter(function(value) {
+      return value === currentItem;
+    }).length;
     
-    var bias = Math.floor((indexA.getSheetByName('Index A').getRange(i+2, 3).getValue()+indexA.getSheetByName('Index A').getRange(i+2, 6).getValue()) /2);
-    if (bias === 1) {
-      var randomEval = Math.round(Math.random() * (-8 - -10) + -10);
-    } else if (bias === 2) {
-      var randomEval = Math.round(Math.random() * (-6 - -8) + -8);
-    } else if (bias === 3) {
-      var randomEval = Math.round(Math.random() * (-4 - -6) + -6);
-    } else if (bias === 4) {
-      var randomEval = Math.round(Math.random() * (-2 - -4) + -4);
-    } else if (bias === 5) {
-      var randomEval = Math.round(Math.random() * (0 - -2) + -2);
-    } else if (bias === 6) {
-      var randomEval = Math.round(Math.random() * (2 - 0) + 2);
-    } else if (bias === 7) {
-      var randomEval = Math.round(Math.random() * (4 - 2) + 2);
-    } else if (bias === 8) {
-      var randomEval = Math.round(Math.random() * (6 - 4) + 4);
-    } else if (bias === 9) {
-      var randomEval = Math.round(Math.random() * (8 - 6) + 6);
-    }  else if (bias === 10) {
-      var randomEval = Math.round(Math.random() * (10 - 8) + 8); 
+    let transactionPercentage = (count/responseCount) * 100;
+    let diversityEval = Math.round(10 * Math.sin(0.05 * transactionPercentage));
+    if (isNaN(diversityEval) === true) {
+      diversityEval = 0;
     }
 
-    // buy and sell evals.
-    // if buy > sell, price goes up. if sell > buy, price goes down
+    let marketAverage = chartStats.getRange(43, marketDay+1).getValue();
+    let averageEval = Math.round(100 * Math.log10(marketAverage/chartStats.getRange(i+2, marketDay+1).getValue()));
 
-    var buyCounts = exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 3).getValue();
-    var sellCounts = exchange.getSheetByName('Buy & Sell Counts').getRange(i+2, 2).getValue();
+    let buyCounts = buySellCounts.getRange(i+2, 3).getValue();
+    let sellCounts = buySellCounts.getRange(i+2, 2).getValue();
+    let slope = 20/9.9;
+    let intercept = - 1010/99;
+    let transactionEvaluation = Math.round((slope * (buyCounts/sellCounts)) + intercept);
+    if ((buyCounts / sellCounts) >= 10) {
+      transactionEvaluation = 10;
+    } else if ((buyCounts / sellCounts) <= 0.1) {
+      transactionEvaluation = -10;
+    }
+    if (sellCounts === 0) {
+      transactionEvaluation = -10;
+    }
+    let values = chartStats.getRange(2, marketDay+1, stockCount, 1).getValues().flat();
+    let evalParameters = [localChangeEval, marketChangeEvaluation, transactionEvaluation, diversityEval, biasEval, averageEval]; 
+    let totalEval = evalParameters.reduce((sum, currentItem) => sum + (Number.isNaN(evalParameters[values.indexOf(currentItem)]) === false && evalParameters[values.indexOf(currentItem)] !== null && evalParameters[values.indexOf(currentItem)] !== "" && evalParameters[values.indexOf(currentItem)] !== "#VALUE!" ? currentItem : 0), 0);
+
+    ratingHist.getRange(i+2, marketDay-18).setValue(totalEval);
+    let changeDir = Math.sign(totalEval);
     
-    if ((buyCounts > sellCounts) && sellCounts > 0) {
-      if (buyCounts / sellCounts >= 6) {
-        var transactionEvaluation = 5;
-      } else if (buyCounts / sellCounts >= 4) {
-        var transactionEvaluation = 4;
-      } else if (buyCounts / sellCounts >= 2) {
-        var transactionEvaluation = 3;
-      } else if (buyCounts / sellCounts >= 1) {
-        var transactionEvaluation = 2;
-      }
+    let changeCount = Math.round((100/Math.asin(1)) * Math.asin(totalEval/145)) + (Math.random() * 0.99);
+    let previousValue = dataStats.getRange(i+3, marketDayColumn).getValue();
+    let newValue = (dataStats.getRange(i+3, 10).getValue() < dataStats.getRange('D20').getValue()) ? 0 : previousValue + changeCount;
 
-    } else if ((buyCounts < sellCounts) &&  buyCounts > 0) {
-      if (sellCounts / buyCounts >= 6) {
-         var transactionEvaluation = -5;
-      } else if (sellCounts / buyCounts >= 4) {
-        var transactionEvaluation = -4;
-      } else if (sellCounts / buyCounts >= 2) {
-        var transactionEvaluation = -3;
-      } else if (sellCounts / buyCounts >= 1) {
-        var transactionEvaluation = -2;
-      }
-    } else if ((buyCounts > sellCounts) && sellCounts === 0) {
-      var transactionEvaluation = 3;
-    } else if ((buyCounts < sellCounts) && buyCounts === 0) {
-      var transactionEvaluation = -3;
-    } else if (buyCounts === sellCounts) {
-      var transactionEvaluation = -2;
+    let expectedCurve = 2500 * Math.sin((Math.PI/(50)) * marketDay+1);
+    if ((newValue > expectedCurve) && (newValue !== 0) && (Math.random() <= 0.007)) {
+      changeCount = -1 * Math.log(Math.abs(expectedCurve - newValue));
+      newValue = previousValue + (changeCount);
+    } else if ((newValue < expectedCurve) && (newValue !== 0) && (Math.random() <= 0.007)) {
+      changeCount = 1 * Math.log(Math.abs(expectedCurve - newValue));
+      newValue = previousValue + (changeCount);
     }
 
-    // calculate total and final evals
-
-    var totalEval = 0
-
-    var evalParameters = [percentChangeEval, marketChangeEvaluation, bidEval, sharesLeftEval, randomEval, transactionEvaluation, groupBiasEval, diversityEval, securityEval]; 
-    for (var j = 0; j < 9; j++) {
-     if (Number.isNaN(evalParameters[j]) == false || evalParameters[j] != null) {
-        totalEval += evalParameters[j];
-      } 
-    }
-    
-    var finalEval = Math.abs(Math.round(totalEval));
-
-    // calculate the new value of the share based on evaluations
-
-    exchange.getSheetByName('Rating History').getRange(i+2, marketDay-18).setValue(totalEval);
-
-    if (totalEval > 0) {
-      var changeDir = 1;
-    } else {
-      var changeDir = -1;
-    }
-
-    // calculate "expected growth"
-
-    var x = [marketDay-1, marketDay, marketDay+1];
-    var y = [exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay-1).getValue(), exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay).getValue(), exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue()];
-
-    var l1 = ((marketDay+2 - x[1]) * (marketDay+2 - x[2])) / ((x[0] - x[1]) * (x[0] - x[2]));
-    var l2 = ((marketDay+2 - x[0]) * (marketDay+2 - x[2])) / ((x[1] - x[0]) * (x[1] - x[2]));
-    var l3 = ((marketDay+2 - x[0]) * (marketDay+2 - x[1])) / ((x[2] - x[0]) * (x[2] - x[1]));
-    Logger.log("lagrange");
-    Logger.log(l1);
-    Logger.log(l2);
-    Logger.log(l3);
-
-    var expectedGrowthLagrange = (y[0] * l1) + (y[1] * l2) + (y[2] * l3);
-    Logger.log(expectedGrowthLagrange);
-    Logger.log("LSRL");
-
-    var xSum = 0;
-    var ySum = 0;
-
-    for (var j = 0; j < marketDay; j++) {
-      ySum += exchange.getSheetByName('Chart Statistics').getRange(i+2, j+2).getValue();
-      xSum += j+1;
-    }
-    Logger.log(xSum);
-    Logger.log(ySum);
-
-    var xBar = xSum/marketDay;
-    var yBar = ySum/marketDay;
-    var n = marketDay;
-
-    var bSum1 = 0;
-    var bSum2 = 0;
-
-    for (var j = 0; j < n; j++) {
-      bSum1 += ((j+1) - xBar)*(exchange.getSheetByName('Chart Statistics').getRange(i+2, j+2).getValue() - yBar);
-      bSum2 += Math.pow((j+1) - xBar, 2);
-    }
-
-    b = bSum1/bSum2;
-
-    var a = yBar - (b * xBar);
-
-    var expectedGrowthLinear = a + (b * marketDay+1);
-
-    if (finalEval >= 60) {
-      if (Math.round(Math.random() * (100 - 1) - 1) <= 99) {
-        var changeCount = Math.round(Math.random() * (150 - 0) + 0) + Math.random();
-      } else if (Math.round(Math.random() * (100 - 1) - 1) === 100) {
-        var changeCount = -45 - Math.random();
-      }
-    } else if (finalEval >= 50) {
-      if (Math.round(Math.random() * (100 - 1) - 1) <= 97) {
-        var changeCount = Math.round(Math.random() * (107 - 0) + 0) + Math.random();
-      } else if (Math.round(Math.random() * (100 - 1) - 1) === 98) {
-        var changeCount = -28 - Math.random();
-      }
-    } else if (finalEval >= 40) {
-      if (Math.round(Math.random() * (100 - 1) - 1) <= 70) {
-        var changeCount = Math.round(Math.random() * (80 - 0) + 0) + Math.random();
-      } else if (Math.round(Math.random() * (100 - 1) - 1) >= 71) {
-        var changeCount = -21 - Math.random();
-      }
-    } else if (finalEval >= 30) {
-      if (Math.round(Math.random() * (100 - 1) - 1) <= 51) {
-        var changeCount = Math.round(Math.random() * (58 - 0) + 0) + Math.random();
-      } else if (Math.round(Math.random() * (100 - 1) - 1) >= 52) {
-        var changeCount = -15 - Math.random();
-      }
-    } else if (finalEval >= 20) {
-      if (Math.round(Math.random() * (100 - 1) - 1) <= 35) {
-        var changeCount = Math.round(Math.random() * (37 - 0) + 0) + Math.random();
-      } else if (Math.round(Math.random() * (100 - 1) - 1) >= 36) {
-        var changeCount = -10 - Math.random();
-      }
-    } else if (finalEval >= 10) {
-      if (Math.round(Math.random() * (100 - 1) - 1) <= 21) {
-        var changeCount = Math.round(Math.random() * (18 - 0) + 0) + Math.random();
-      } else if (Math.round(Math.random() * (100 - 1) - 1) >= 22 ) {
-        var changeCount = -5 - Math.random();
-      }
-    } else if (finalEval >= 1) {
-      if (Math.round(Math.random() * (100 - 1) - 1) <= 7) {
-        var changeCount = Math.round(Math.random() * (2 - 0) + 0) + Math.random();
-      } else if (Math.round(Math.random() * (100 - 1) - 1) >= 8 ) {
-        var changeCount = -1 - Math.random();
-      }
-    }  
-
-    var previousValue = exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn).getValue();
-
-    if (exchange.getSheetByName('Data & Statistics').getRange('g2').getValue() === "fall") {
-      if (fallStocks.indexOf(i+2) !== -1 || yearStocks.indexOf(i+2) !== -1) {
-        var newValue = previousValue + (changeDir * changeCount);
+ 
+    // set the new values
+    if (dataStats.getRange('g2').getValue() === "fall") {
+      if (fallStocks.indexOf(i+2) !== -1 || miscStocks.indexOf(i+2) !== -1) {
+        newValue = previousValue + (changeDir * (changeCount * Math.random() * (2-1.5) + 1.5));
       } else {
-        var newValue = previousValue + (changeDir * (changeCount / (Math.random() * (4-3) + 3)));
+        newValue = previousValue + (changeDir * changeCount);
       }
-    } else if (exchange.getSheetByName('Data & Statistics').getRange('g2').getValue() === "winter") {
-      if (winterStocks.indexOf(i+2) !== -1 || yearStocks.indexOf(i+2) !== -1) {
-        var newValue = previousValue + (changeDir * changeCount);
+    } else if (dataStats.getRange('g2').getValue() === "winter") {
+      if (winterStocks.indexOf(i+2) !== -1 || miscStocks.indexOf(i+2) !== -1) {
+        newValue = previousValue + (changeDir * (changeCount * Math.random() * (2-1.5) + 1.5));
       } else {
-        var newValue = previousValue + (changeDir * (changeCount / (Math.random() * (4-3) + 3)))
+        newValue = previousValue + (changeDir * changeCount);
       }
-    } else if (exchange.getSheetByName('Data & Statistics').getRange('g2').getValue() === "spring") {
-      if (springStocks.indexOf(i+2) !== -1 || yearStocks.indexOf(i+2) !== -1) {
-      var newValue = previousValue + (changeDir * changeCount);
+    } else if (dataStats.getRange('g2').getValue() === "spring") {
+      if (springStocks.indexOf(i+2) !== -1 || miscStocks.indexOf(i+2) !== -1) {
+        newValue = previousValue + (changeDir * (changeCount * Math.random() * (2-1.5) + 1.5));
       } else {
-        var newValue = previousValue + (changeDir * (changeCount / (Math.random() * (4-3) + 3)))
+        newValue = previousValue + (changeDir * changeCount);
       }  
-   
     }
-    if (newValue < 0.01) {
-      var newValue = 1 + (Math.random() * (5 - 0) + 0) + Math.random();
-    }
+    dataStats.getRange(i+3, marketDayColumn+5).setValue(newValue);
+    let doStockSplits = ((diversityEval < 5) && (newValue >= 2500) && ((Math.random() * 99 + 1) <= 5)) ? true : false
 
-    if (newValue >= expectedGrowthLagrange && newValue >= expectedGrowthLinear) {
-      newValue *= 1.2;
-    } else if (newValue >= expectedGrowthLagrange && newValue < expectedGrowthLinear) {
-      newValue *= 1.05;
-    } else if (newValue < expectedGrowthLagrange && newValue >= expectedGrowthLinear) {
-      newValue *= 1;
-    } else if (newValue < expectedGrowthLagrange && newValue < expectedGrowthLinear) {
-      newValue *= 0.85;
+    if (doStockSplits == true) {
+      splitRatio = 3;
+      dataStats.getRange(i+3, marketDayColumn+5).setValue(newValue / splitRatio);
+      dataStats.getRange(i+3, 10).setValue(dataStats.getRange(i+3, 10).getValue() * splitRatio);
     }
-
-    if (buyBid / exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() >= 2) {
-      var bubbleEval = 5;
-    } else if (buyBid / exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() > 1) {
-      var bubbleEval = 2;
-    } else if (buyBid / exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() >= 0.5) {
-      var bubbleEval = -4;
-    } else if (buyBid / exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+1).getValue() >= 0.25) {
-      var bubbleEval = -6;
-    } else {
-      var bubbleEval = -10;
-    }
-
-    if (groupBias >= 9) {
-      bubbleEval += 10;
-    } else if (groupBias >= 8) {
-      bubbleEval += 8 
-    } else if (groupBias >= 7) {
-      bubbleEval += 5
-    } else if (groupBias >= 6) {
-      bubbleEval += 3
-    } else if (groupBias >= 5) {
-      bubbleEval += 2
-    } else if (groupBias >= 4) {
-      bubbleEval -= 1;
-    } else if (groupBias >= 3) {
-      bubbleEval -= 2; 
-    } else if (groupBias >= 2) {
-      bubbleEval -= 4;
-    } else if (groupBias >= 1) {
-      bubbleEval -= 6;
-    } else {
-      bubbleEval -= 8;
-    }
-
-    if (diversityEval >= Math.ceil(exchange.getSheetByName('Data & Statistics').getRange('D20').getValue() / 2)) {
-      bubbleEval += 4;
-    } else if (diversityEval >= Math.ceil(exchange.getSheetByName('Data & Statistics').getRange('D20').getValue() / 3)) {
-      bubbleEval += 2;
-    } else if (diversityEval >= Math.ceil(exchange.getSheetByName('Data & Statistics').getRange('D20').getValue() / 4)) {
-      bubbleEval -= 2;
-    } else {
-      bubbleEval -= 5;
-    }
-
-    if (bubbleEval >= 18) {
-      var bubbleChance = Math.random() * (100 - 80) + 80; 
-    } else if (bubbleEval >= 14) {
-      var bubbleChance = Math.random() * (90 - 70) + 70;
-    } else if (bubbleEval >= 8) {
-      var bubbleChance = Math.random() * (80 - 60) + 60;
-    } else if (bubbleEval >= 0) {
-      var bubbleChance = Math.random() * (70 - 50) + 50;
-    } else if (bubbleEval >= -8) {
-      var bubbleChance = Math.random() * (60 - 40) + 40;
-    } else if (bubbleEval >= -14) {
-      var bubbleChance = Math.random() * (50 - 30) + 30;
-    } else if (bubbleEval >= - 18) {
-      var bubbleChance = Math.random() * (40 - 20) + 20;
-    } else {
-      var bubbleChance = Math.random() * (30 - 10) + 10;
-    }
-    if (newValue > 2500) {
-      newValue += -1 * (Math.random() * (2000 - 750) + 750);
-    } else {
-      if (changeDir === 1) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() > 0) {
-          if (newValue >= 2000) {
-            if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-              newValue += 0;
-            } else {
-              newValue = previousValue - (changeCount/1.4);
-            }
-          } else if (newValue >= 1500) {
-              if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-                newValue += 0;
-              } else {
-                newValue = previousValue - (changeCount/2);
-              }
-          } else if (newValue >= 1000) {
-              if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-                newValue += 0;
-              } else {
-                newValue = previousValue - (changeCount/2.4);
-              }
-          }
-        } else if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() <= 0) {
-          if (newValue >= 1500) {
-            if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-              newValue = previousValue - 50;
-            } else {
-              newValue = previousValue - (changeCount/1.4);
-            }
-          } else if (newValue >= 1000) {
-              if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-                newValue = previousValue - 25;
-              } else {
-                newValue = previousValue - (changeCount/2);
-              }
-          } else if (newValue >= 800) {
-              if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-                newValue = previousValue - 10;
-              } else {
-                newValue = previousValue - (changeCount/2.4);
-              }
-          }
-        }
-      } else if (changeDir === -1) {
-        if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() > 0) {
-          if (newValue >= 2000) {
-            if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-              newValue += 0;
-            } else {
-              newValue = previousValue - (changeCount * 2.4);
-            }
-          } else if (newValue >= 1500) {
-            if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-              newValue += 0;
-            } else {
-              newValue = previousValue - (changeCount * 2);
-            }
-          } else if (newValue >= 1000) {
-            if (Math.random() * (100 - 1) + 1 < bubbleChance) {
-              newValue += 0;
-            } else {
-              newValue = previousValue - (changeCount * 1.4);
-            }
-          }
-        } else if (exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn - 3).getValue() <= 0) {
-          if (newValue >= 1500) {
-            if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-              newValue = previousValue - 50;
-            } else {
-              newValue = previousValue - (changeCount * 2);
-            }
-          } else if (newValue >= 1000) {
-              if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-                newValue = previousValue - 25;
-              } else {
-                newValue = previousValue - (changeCount * 1.4);
-              }
-          } else if (newValue >= 800) {
-              if (Math.random() * (90 - 1) + 1 < bubbleChance) {
-                newValue = previousValue - 10;
-              } else {
-                newValue = previousValue - (changeCount);
-              }
-          }
-        }
-      }
-    }
-
-  if (i+2 == top3Securities[0] || i+2 == top3Securities[1] || i+2 == top3Securities[2]) {
-      newValue = previousValue + (changeDir * changeCount * (Math.random() * (2.5-1.01) + 1.01));
-    }
-
+  }
+  dataStats.getRange(3, marketDayColumn+5, stockCount, 1).setNumberFormat('$0.00');
   updateMarketDay();
 }
 
 function updateMarketDay() {
-  var now = new Date();
-  const exchange = SpreadsheetApp.openById('');
-  const indexA = SpreadsheetApp.openById();
+  Logger.log("UMD");
+  dataStats.getRange('E20').setValue('1');
+  chartStats.getRange(1, marketDay+2).setValue("day " + (marketDay + 1));
+  let shares = dataStats.getRange(3, 10, stockCount, 1).getValues().flat();
 
-  if (now.getHours() <= 10) {
-    var marketDay = exchange.getSheetByName('Data & Statistics').getRange('G1').getValue();
-  } else if (now.getHours() > 10) {
-    var marketDay = exchange.getSheetByName('Data & Statistics').getRange('G1').getValue()-1;
+  for (let i = 0; i < stockCount; i++) {
+    let value = dataStats.getRange(i+3, marketDayColumn+5).getValue();
+    chartStats.getRange(i+2, marketDay+2).setValue("$" + value);
+    dataStats.getRange(i+3, marketDayColumn+6).setValue(value - dataStats.getRange(i+3, marketDayColumn).getValue());
+    dataStats.getRange(i+3, marketDayColumn+6).setNumberFormat('$0.00').setFontColor("white");
+    dataStats.getRange(i+3, marketDayColumn+7).setValue((value / dataStats.getRange(i+3, marketDayColumn).getValue()) - 1);
+    dataStats.getRange(i+3, marketDayColumn+7).setNumberFormat('0.00%').setFontColor("white");
+
+    if (dataStats.getRange(i+3, marketDayColumn+6).getValue() < 0) {
+      dataStats.getRange(i+3, marketDayColumn+6).setBackground('#ff0000');
+    } else if (dataStats.getRange(i+3, marketDayColumn+6).getValue() === 0) {
+      dataStats.getRange(i+3, marketDayColumn+6).setBackground('#cccccc');
+    } else if (dataStats.getRange(i+3, marketDayColumn+6).getValue() > 0) {
+      dataStats.getRange(i+3, marketDayColumn+6).setBackground('#188038');
+    }
+
+    if (dataStats.getRange(i+3, marketDayColumn+7).getValue() < 0) {
+      dataStats.getRange(i+3, marketDayColumn+7).setBackground('#ff0000');
+    } else if (dataStats.getRange(i+3, marketDayColumn+7).getValue() === 0) {
+      dataStats.getRange(i+3, marketDayColumn+7).setBackground('#cccccc');
+    } else if (dataStats.getRange(i+3, marketDayColumn+7).getValue() > 0) {
+      dataStats.getRange(i+3, marketDayColumn+7).setBackground('#188038');
+    }
+
+    // increase shares 
+    let taxMoney = buySellCounts.getRange(i+2, 6).getValue();
+    if (taxMoney > 0 && taxMoney > chartStats.getRange(i+2, marketDay+1).getValue()) {
+      let additionalShares = Math.floor(buySellCounts.getRange(i+2, 6).getValue()/chartStats.getRange(i+2, marketDay+1).getValue());
+      let newShareCount = Number(shares[i]) + Number(additionalShares);
+      dataStats.getRange(i+3, 10).setValue(newShareCount);
+      buySellCounts.getRange(i+2, 6).setValue(taxMoney - (additionalShares * chartStats.getRange(i+2, marketDay+1).getValue()));
+    }
   }
 
-  if (marketDay === 1) {
-    var marketDayColumn = 10;
-  } else if (marketDay > 1) {
-    var marketDayColumn = 12 + ((marketDay - 2) * 5);
+  let changes = dataStats.getRange(3, marketDayColumn+7, stockCount, 1).getValues().flat();
+  let changes_ordered = [...new Set(changes.filter(v => v !== "" && v !== null))];
+  changes_ordered.sort((a,b) => b-a);
+  let values = chartStats.getRange(2, marketDay+2, stockCount, 1).getValues().flat();
+  let prices_ordered = [...new Set(values.filter(v => v !== "" && v !== null))];
+  prices_ordered.sort((a,b) => b-a);
+  for (let i = 0; i < stockCount; i++) {
+    let price_rank = prices_ordered.indexOf(values[i]);
+    dataStats.getRange(i+3, marketDayColumn+8).setValue(Number(price_rank+1));
+    let change_rank = changes_ordered.indexOf(changes[i]);
+    dataStats.getRange(i+3, marketDayColumn+9).setValue(Number(change_rank+1));
   }
 
-  for (var i = 0; i < stockCount; i++) {
-    // update market day by 1
-    exchange.getSheetByName('Data & Statistics').getRange('E20').setValue('1');
-    exchange.getSheetByName('Data & Statistics').getRange('G1').setValue(marketDay+1);
+  let rule = SpreadsheetApp.newConditionalFormatRule()
+    .setGradientMinpointWithValue('#57bb8a', SpreadsheetApp.InterpolationType.PERCENTILE, 0)
+    .setGradientMidpointWithValue("#ffd666", SpreadsheetApp.InterpolationType.PERCENTILE, 50)
+    .setGradientMaxpointWithValue('#e67c73', SpreadsheetApp.InterpolationType.PERCENTILE, 100)
+    .setRanges([dataStats.getRange(3, marketDayColumn + 8, stockCount, 1), dataStats.getRange(3, marketDayColumn + 9, stockCount, 1)])
+    .build();
+  
+  let rules = dataStats.getConditionalFormatRules();
+  rules.push(rule);
+  dataStats.setConditionalFormatRules(rules);
 
-    exchange.getSheetByName('Chart Statistics').getRange(1, marketDay+2).setValue("day " + (marketDay + 1));
+  let pValues = chartStats.getRange(2, marketDay+1, stockCount, 1).getValues().flat();
+  let p_tmv = pValues.reduce((sum, currentItem) => sum + currentItem, 0);
+  let tmv =  values.reduce((sum, currentItem) => sum + currentItem, 0);
 
-    var value = exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+5).getValue();
-    exchange.getSheetByName('Chart Statistics').getRange(i+2, marketDay+2).setValue("$" + value);
-    indexA.getSheetByName('Index A').getRange(i+2, 9).setValue(value);
-    exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+6).setValue(exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+5).getValue() - exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn).getValue())
-    exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+7).setValue((exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn+5).getValue() / exchange.getSheetByName('Data & Statistics').getRange(i+3, marketDayColumn).getValue()) - 1);
+  let totalCap = values.reduce((sum, currentItem) => sum + (currentItem * shares[values.indexOf(currentItem)]), 0) / 1000000;
+  let totalAvg = values.reduce((sum, currentItem)=> sum + currentItem, 0) / values.length;
+  let fallAvg = values.reduce((sum, currentItem) => sum + (fallStocks.indexOf(values.indexOf(currentItem) + 2) != -1 ? currentItem : 0), 0) / fallStocks.length;
+  let fallCap = values.reduce((sum, currentItem) => sum + (fallStocks.indexOf(values.indexOf(currentItem) + 2) != -1 ? currentItem * shares[values.indexOf(currentItem)]: 0), 0) / 1000000;
+  let winterAvg = values.reduce((sum, currentItem) => sum + (winterStocks.indexOf(values.indexOf(currentItem) + 2) != -1 ? currentItem : 0), 0) / winterStocks.length;
+  let winterCap = values.reduce((sum, currentItem) => sum + (winterStocks.indexOf(values.indexOf(currentItem) + 2) != -1 ? currentItem * shares[values.indexOf(currentItem)]: 0), 0) / 1000000;
+  let springAvg = values.reduce((sum, currentItem) => sum + (springStocks.indexOf(values.indexOf(currentItem) + 2) != -1 ? currentItem : 0), 0) / springStocks.length;
+  let springCap = values.reduce((sum, currentItem) => sum + (springStocks.indexOf(values.indexOf(currentItem) + 2) != -1 ? currentItem * shares[values.indexOf(currentItem)]: 0), 0) / 1000000;
+  let miscAvg = values.reduce((sum, currentItem) => sum + (miscStocks.indexOf(values.indexOf(currentItem) + 2) != -1 ? currentItem : 0), 0) / miscStocks.length;
+  let miscCap = values.reduce((sum, currentItem) => sum + (miscStocks.indexOf(values.indexOf(currentItem) + 2) != -1 ? currentItem * shares[values.indexOf(currentItem)]: 0), 0) / 1000000;
 
-  }
+  chartStats.getRange(stockCount+3, marketDay+2).setValue(totalAvg);
+  chartStats.getRange(stockCount+4, marketDay+2).setValue(fallAvg);
+  chartStats.getRange(stockCount+5, marketDay+2).setValue(winterAvg);
+  chartStats.getRange(stockCount+6, marketDay+2).setValue(springAvg);
+  chartStats.getRange(stockCount+7, marketDay+2).setValue(miscAvg);
+  chartStats.getRange(stockCount+8, marketDay+2).setValue(totalCap);
+  chartStats.getRange(stockCount+9, marketDay+2).setValue(fallCap);
+  chartStats.getRange(stockCount+10, marketDay+2).setValue(winterCap);
+  chartStats.getRange(stockCount+11, marketDay+2).setValue(springCap);
+  chartStats.getRange(stockCount+12, marketDay+2).setValue(miscCap);
+  dataStats.getRange('E3').setValue(tmv);
+  dataStats.getRange('E4').setValue(tmv-6212.00);
+  dataStats.getRange('E5').setValue(tmv-p_tmv);
 
-  exchange.getSheetByName('Data & Statistics').getRange(2, marketDayColumn+6).setValue('change');
-  exchange.getSheetByName('Data & Statistics').getRange(2, marketDayColumn+7).setValue('%change');
-  exchange.getSheetByName('Data & Statistics').getRange(2, marketDayColumn+8).setValue('price rank');
-  exchange.getSheetByName('Data & Statistics').getRange(2, marketDayColumn+9).setValue('change rank');
+  dataStats.getRange(2, marketDayColumn+6).setValue('change');
+  dataStats.getRange(2, marketDayColumn+7).setValue('%change');
+  dataStats.getRange(2, marketDayColumn+8).setValue('price rank');
+  dataStats.getRange(2, marketDayColumn+9).setValue('change rank');
   const day = new Date().getDate();
   const month = new Date().getMonth();
   const year = new Date().getFullYear();
-  exchange.getSheetByName('Data & Statistics').getRange(1, marketDayColumn+5).setValue((month+1) + '/' + day + '/' + year + ' - day ' + (marketDay+1) + ' - ' + exchange.getSheetByName('Data & Statistics').getRange('g2').getValue());
-  exchange.getSheetByName('Data & Statistics').getRange(2, marketDayColumn+5).setValue('value');
-  var indexAAverage = indexA.getSheetByName('Thurman Rating 1.1').getRange('N4').getValue();
-
-  //again, replace 49 and 48 with the number of stocks in your exchange +9 and 8 respectively
-  exchange.getSheetByName('Chart Statistics').getRange(stockCount+8, marketDay+2).setValue('$' + indexAverage);
-
+  dataStats.getRange(1, marketDayColumn+5).setValue((month+1) + '/' + day + '/' + year + ' - day ' + (marketDay+1) + ' - ' + dataStats.getRange('g2').getValue());
+  dataStats.getRange(1, marketDayColumn+5,1, 5).merge();
+  dataStats.getRange(2, marketDayColumn+5).setValue('value');
+  dataStats.getRange('G1').setValue(marketDay+1);
+  chartStats.getRange(stockCount+13, marketDay+2).setValue(dataStats.getRange('E8').getValue() / 1000000);
+  Logger.log("UIS");
   updateIndividualSheets();
 }
 
 function updateIndividualSheets() {
-  const exchange = SpreadsheetApp.openById();
+  Logger.log("UIV");
+  // update individual sheets
+  for (let i = 0; i < ids.length; i++) {
+    let sheet = SpreadsheetApp.openById(ids[i]);
+    let tax = 0;
+    let netWorth = sheet.getSheetByName('portfolio').getRange('G1').getValue();
+    let bankWorth = sheet.getSheetByName('portfolio').getRange('G2').getValue();  
+    for (let j = 0; j < stockCount; j++) {
 
-  var marketDay = exchange.getSheetByName('Data & Statistics').getRange('G1').getValue();
-
-  // stock tickers in the order they appear on the Google Sheets
-  const stocks = [];
-
-  // individual portfolio sheet ids
-  const ids = [];
-
-  for (var i = 0; i < ids.length; i++) {
-    var sheet = SpreadsheetApp.openById(ids[i]);
-
-    //replace 40 with the number of stocks in your exchange
-
-    for (var j = 0; j < stockCount; j++) {
-      var updatedValue = (exchange.getSheetByName('Chart Statistics').getRange(j+2, marketDay+1).getValue() * sheet.getSheetByName('portfolio').getRange(j+2, 4).getValue());
+      let currentCount = sheet.getSheetByName('portfolio').getRange(j+2, 4).getValue() * splitRatio;
+      let updatedValue = (chartStats.getRange(j+2, marketDay+1).getValue() * currentCount);
+      let futuresTime = sheet.getSheetByName('data').getRange(j+2, 6).getValue();
+      let futuresCount = sheet.getSheetByName('data').getRange(j+2, 5).getValue();
+      if (futuresTime > 1) { 
+        sheet.getSheetByName('data').getRange(j+2, 6).setValue(futuresTime-1);
+      } else {
+        sheet.getSheetByName('data').getRange(j+2, 6).setValue("");
+        sheet.getSheetByName('data').getRange(j+2, 5).setValue(0);
+        sheet.getSheetByName('portfolio').getRange('G2').setValue(bankWorth + (futuresCount * updatedValue));
+      }
+      sheet.getSheetByName('portfolio').getRange(j+2, 4).setValue(currentCount);
       sheet.getSheetByName('portfolio').getRange(j+2, 3).setValue(updatedValue);
     }
-  }
+    if (netWorth > 10000000) {
+      tax = (1-0.66)
+    } else if (netWorth <= 10000000 && netWorth > 5000000) {
+      tax = (1-0.73);
+    } else if (netWorth <= 5000000 && netWorth > 2500000) {
+      tax = (1-0.77);
+    } else if (netWorth <=2500000 && netWorth > 1500000) {
+      tax = (1-0.82);
+    } else if (netWorth <= 1500000 && netWorth > 850000) {
+      tax = (1-0.86);
+    } else if (netWorth <= 850000 && netWorth > 200000) {
+      tax = (1-0.90);
+    } else if (netWorth <= 200000 && netWorth > 50000) {
+      tax = (1-0.93);
+    } else if (netWorth <= 50000) {
+      tax = (1-0.95);
+    }
 
+    sheet.getSheetByName('portfolio').getRange('I2').setValue(tax*100);
+  }
 }
+
