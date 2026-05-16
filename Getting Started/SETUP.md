@@ -15,14 +15,10 @@ _Refer to the images in the Getting Started Folder for a visual representation o
 6. Create the fifth tab `Passwords` **This sheet should be hidden**
 7. Create a tab and title it `Index A` then, make a chart and scale it to fit the page. 
 8. In the `Data & Statistics` tab, in the A column, starting from row 3 and going down, insert the letter(s) of the value column for each day.
-9. Make an example portfolio sheet and activate the `create_sheets.js` script. 
+9. Make an example portfolio sheet and activate the `create_sheets.js` script.
 
+10. in `constsants.js` fill in the missing form and sheet ids as needed
 
-
-# Setting up Index A
-
-1. Make a Google Sheet and designate it as your main Index A sheet.
-2. Name the first tab `Index A`
 
 # Setting up example portfolio
 
